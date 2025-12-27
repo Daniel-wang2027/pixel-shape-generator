@@ -3,33 +3,24 @@ import type { Shape } from '../types.d.ts';
 import CellLine from './helpers/CellLine.tsx';
 import Slider from '../ui-components/Slider.tsx';
 
-const [size, setSize] = createSignal(25);
+const [teeth, setTeeth] = createSignal(8);
+const [outerRadius, setOuterRadius] = createSignal(40);
+const [innerRadius, setInnerRadius] = createSignal(30);
 const [rotation, setRotation] = createSignal(0);
 
 const ShapeComponent = (): JSX.Element => {
   const points = () => {
     const pts: { x: number; y: number }[] = [];
-    const s = size() / 2;
+    const n = teeth() * 2;
     const rad = (rotation() * Math.PI) / 180;
     
-    // Heart curve parametric equation with rotation
-    for (let t = 0; t <= 2 * Math.PI; t += 0.05) {
-      const xRaw = 16 * Math.pow(Math.sin(t), 3);
-      const yRaw = -(
-        13 * Math.cos(t) -
-        5 * Math.cos(2 * t) -
-        2 * Math.cos(3 * t) -
-        Math.cos(4 * t)
-      );
-      const scale = s / 17;
-      const xScaled = xRaw * scale;
-      const yScaled = yRaw * scale;
-      
-      // Apply rotation
-      const x = xScaled * Math.cos(rad) - yScaled * Math.sin(rad);
-      const y = xScaled * Math.sin(rad) + yScaled * Math.cos(rad);
-      
-      pts.push({ x, y });
+    for (let i = 0; i < n * 2; i++) {
+      const angle = (i * Math.PI) / n + rad;
+      const r = i % 4 < 2 ? outerRadius() : innerRadius();
+      pts.push({
+        x: r * Math.cos(angle),
+        y: r * Math.sin(angle),
+      });
     }
     return pts;
   };
@@ -48,11 +39,25 @@ const SettingsComponent = (): JSX.Element => {
   return (
     <>
       <Slider
-        label="Size"
+        label="Teeth"
+        min={3}
+        max={32}
+        currentVal={teeth}
+        updateVal={setTeeth}
+      />
+      <Slider
+        label="Outer Radius"
         min={10}
-        max={500}
-        currentVal={size}
-        updateVal={setSize}
+        max={250}
+        currentVal={outerRadius}
+        updateVal={setOuterRadius}
+      />
+      <Slider
+        label="Inner Radius"
+        min={5}
+        max={200}
+        currentVal={innerRadius}
+        updateVal={setInnerRadius}
       />
       <Slider
         label="Rotation"
@@ -65,10 +70,10 @@ const SettingsComponent = (): JSX.Element => {
   );
 };
 
-const Heart: Shape = {
+const Gear: Shape = {
   shapeComponent: ShapeComponent,
   settingsComponent: SettingsComponent,
-  name: 'Heart',
+  name: 'Gear',
 };
 
-export default Heart;
+export default Gear;

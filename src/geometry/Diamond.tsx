@@ -3,35 +3,24 @@ import type { Shape } from '../types.d.ts';
 import CellLine from './helpers/CellLine.tsx';
 import Slider from '../ui-components/Slider.tsx';
 
-const [size, setSize] = createSignal(25);
+const [width, setWidth] = createSignal(40);
+const [height, setHeight] = createSignal(60);
 const [rotation, setRotation] = createSignal(0);
 
 const ShapeComponent = (): JSX.Element => {
   const points = () => {
-    const pts: { x: number; y: number }[] = [];
-    const s = size() / 2;
+    const pts = [
+      { x: 0, y: -height() / 2 },
+      { x: width() / 2, y: 0 },
+      { x: 0, y: height() / 2 },
+      { x: -width() / 2, y: 0 },
+    ];
     const rad = (rotation() * Math.PI) / 180;
     
-    // Heart curve parametric equation with rotation
-    for (let t = 0; t <= 2 * Math.PI; t += 0.05) {
-      const xRaw = 16 * Math.pow(Math.sin(t), 3);
-      const yRaw = -(
-        13 * Math.cos(t) -
-        5 * Math.cos(2 * t) -
-        2 * Math.cos(3 * t) -
-        Math.cos(4 * t)
-      );
-      const scale = s / 17;
-      const xScaled = xRaw * scale;
-      const yScaled = yRaw * scale;
-      
-      // Apply rotation
-      const x = xScaled * Math.cos(rad) - yScaled * Math.sin(rad);
-      const y = xScaled * Math.sin(rad) + yScaled * Math.cos(rad);
-      
-      pts.push({ x, y });
-    }
-    return pts;
+    return pts.map(p => ({
+      x: p.x * Math.cos(rad) - p.y * Math.sin(rad),
+      y: p.x * Math.sin(rad) + p.y * Math.cos(rad),
+    }));
   };
 
   return (
@@ -48,11 +37,18 @@ const SettingsComponent = (): JSX.Element => {
   return (
     <>
       <Slider
-        label="Size"
+        label="Width"
         min={10}
         max={500}
-        currentVal={size}
-        updateVal={setSize}
+        currentVal={width}
+        updateVal={setWidth}
+      />
+      <Slider
+        label="Height"
+        min={10}
+        max={500}
+        currentVal={height}
+        updateVal={setHeight}
       />
       <Slider
         label="Rotation"
@@ -65,10 +61,10 @@ const SettingsComponent = (): JSX.Element => {
   );
 };
 
-const Heart: Shape = {
+const Diamond: Shape = {
   shapeComponent: ShapeComponent,
   settingsComponent: SettingsComponent,
-  name: 'Heart',
+  name: 'Diamond',
 };
 
-export default Heart;
+export default Diamond;
