@@ -22,6 +22,10 @@ import Gear from './geometry/Gear.tsx';
 import Diamond from './geometry/Diamond.tsx';
 import Capsule from './geometry/Capsule.tsx';
 import Cross from './geometry/Cross.tsx';
+import Arrow from './geometry/Arrow.tsx';
+import Crescent from './geometry/Crescent.tsx';
+import Trapezoid from './geometry/Trapezoid.tsx';
+import LShape from './geometry/LShape.tsx';
 
 import { downloadSVG, downloadPNG, downloadPBM } from './download.ts';
 import {
@@ -76,6 +80,10 @@ function App() {
     Diamond,
     Capsule,
     Cross,
+    Arrow,
+    Crescent,
+    Trapezoid,
+    LShape,
   ];
 
   const [selectedShape, setSelectedShape] = createSignal<Shape>(shapes[0]);
