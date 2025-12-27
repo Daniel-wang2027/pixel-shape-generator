@@ -2,6 +2,12 @@ import { defineConfig } from 'vite';
 import solid from 'vite-plugin-solid';
 
 export default defineConfig({
-  base: '/pixel-shape-generator/',
   plugins: [solid()],
+  server: {
+    host: '0.0.0.0',
+    port: 5000,
+    hmr: {
+      clientPort: 443,
+    },
+  },
 });
