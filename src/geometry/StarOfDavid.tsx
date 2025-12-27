@@ -9,7 +9,6 @@ const [rotation, setRotation] = createSignal(0);
 const ShapeComponent = (): JSX.Element => {
   const points = () => {
     const s = size() / 2;
-    const r = s / Math.sqrt(3);
     const rad = (rotation() * Math.PI) / 180;
 
     const triangle1 = [
