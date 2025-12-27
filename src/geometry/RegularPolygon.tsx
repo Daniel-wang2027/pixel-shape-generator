@@ -69,7 +69,7 @@ const SettingsComponent = (): JSX.Element => {
       <Slider
         label="Sides"
         min={3}
-        max={16}
+        max={100}
         currentVal={sides}
         updateVal={setSides}
       />
