@@ -6,8 +6,8 @@ import Slider from '../ui-components/Slider.tsx';
 const [thickness, setThickness] = createSignal(20);
 const [horizontalLength, setHorizontalLength] = createSignal(80);
 const [verticalLength, setVerticalLength] = createSignal(80);
-const [horizontalOffset, setHorizontalOffset] = createSignal(0);
-const [verticalOffset, setVerticalOffset] = createSignal(0);
+const [horizontalBarOffset, setHorizontalBarOffset] = createSignal(0);
+const [verticalBarOffset, setVerticalBarOffset] = createSignal(0);
 const [rotation, setRotation] = createSignal(0);
 
 const ShapeComponent = (): JSX.Element => {
@@ -15,14 +15,17 @@ const ShapeComponent = (): JSX.Element => {
     const t = thickness() / 2;
     const hl = horizontalLength() / 2;
     const vl = verticalLength() / 2;
-    const xOff = horizontalOffset();
-    const yOff = verticalOffset();
+    const hOff = horizontalBarOffset();
+    const vOff = verticalBarOffset();
 
+    // The cross is made of 12 points. 
+    // We adjust the horizontal bar points with vOff (moves it up/down)
+    // and the vertical bar points with hOff (moves it left/right)
     const pts = [
-      { x: -t + xOff, y: -vl + yOff }, { x: t + xOff, y: -vl + yOff }, { x: t + xOff, y: -t + yOff },
-      { x: hl + xOff, y: -t + yOff }, { x: hl + xOff, y: t + yOff }, { x: t + xOff, y: t + yOff },
-      { x: t + xOff, y: vl + yOff }, { x: -t + xOff, y: vl + yOff }, { x: -t + xOff, y: t + yOff },
-      { x: -hl + xOff, y: t + yOff }, { x: -hl + xOff, y: -t + yOff }, { x: -t + xOff, y: -t + yOff },
+      { x: -t + hOff, y: -vl }, { x: t + hOff, y: -vl }, { x: t + hOff, y: -t + vOff },
+      { x: hl, y: -t + vOff }, { x: hl, y: t + vOff }, { x: t + hOff, y: t + vOff },
+      { x: t + hOff, y: vl }, { x: -t + hOff, y: vl }, { x: -t + hOff, y: t + vOff },
+      { x: -hl, y: t + vOff }, { x: -hl, y: -t + vOff }, { x: -t + hOff, y: -t + vOff },
     ];
     const rad = (rotation() * Math.PI) / 180;
 
@@ -46,10 +49,10 @@ const SettingsComponent = (): JSX.Element => {
   return (
     <>
       <Slider label="Thickness" min={5} max={100} currentVal={thickness} updateVal={setThickness} />
-      <Slider label="Horizontal Length" min={10} max={400} currentVal={horizontalLength} updateVal={setHorizontalLength} />
-      <Slider label="Vertical Length" min={10} max={400} currentVal={verticalLength} updateVal={setVerticalLength} />
-      <Slider label="Horizontal Offset" min={-200} max={200} currentVal={horizontalOffset} updateVal={setHorizontalOffset} />
-      <Slider label="Vertical Offset" min={-200} max={200} currentVal={verticalOffset} updateVal={setVerticalOffset} />
+      <Slider label="Horiz. Length" min={10} max={400} currentVal={horizontalLength} updateVal={setHorizontalLength} />
+      <Slider label="Vert. Length" min={10} max={400} currentVal={verticalLength} updateVal={setVerticalLength} />
+      <Slider label="Horiz. Bar Offset" min={-200} max={200} currentVal={horizontalBarOffset} updateVal={setHorizontalBarOffset} />
+      <Slider label="Vert. Bar Offset" min={-200} max={200} currentVal={verticalBarOffset} updateVal={setVerticalBarOffset} />
       <Slider label="Rotation" min={0} max={360} currentVal={rotation} updateVal={setRotation} />
     </>
   );
