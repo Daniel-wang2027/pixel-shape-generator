@@ -20,6 +20,8 @@ import Circle from './geometry/Circle.tsx';
 import Heart from './geometry/Heart.tsx';
 import Gear from './geometry/Gear.tsx';
 import Diamond from './geometry/Diamond.tsx';
+import Capsule from './geometry/Capsule.tsx';
+import Cross from './geometry/Cross.tsx';
 
 import { downloadSVG, downloadPNG, downloadPBM } from './download.ts';
 import {
@@ -72,6 +74,8 @@ function App() {
     Heart,
     Gear,
     Diamond,
+    Capsule,
+    Cross,
   ];
 
   const [selectedShape, setSelectedShape] = createSignal<Shape>(shapes[0]);
