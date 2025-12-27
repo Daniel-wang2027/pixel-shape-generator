@@ -26,6 +26,8 @@ import Arrow from './geometry/Arrow.tsx';
 import Crescent from './geometry/Crescent.tsx';
 import Trapezoid from './geometry/Trapezoid.tsx';
 import LShape from './geometry/LShape.tsx';
+import StarOfDavid from './geometry/StarOfDavid.tsx';
+import StarAndCrescent from './geometry/StarAndCrescent.tsx';
 
 import { downloadSVG, downloadPNG, downloadPBM } from './download.ts';
 import {
@@ -84,6 +86,8 @@ function App() {
     Crescent,
     Trapezoid,
     LShape,
+    StarOfDavid,
+    StarAndCrescent,
   ];
 
   const [selectedShape, setSelectedShape] = createSignal<Shape>(shapes[0]);
