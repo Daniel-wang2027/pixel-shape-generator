@@ -10,38 +10,57 @@ const [rotation, setRotation] = createSignal(0);
 
 const ShapeComponent = (): JSX.Element => {
   const points = () => {
-    const pts: { x: number; y: number }[] = [];
+    const s = outerRadius();
     const rad = (rotation() * Math.PI) / 180;
-    const or = outerRadius();
-    const ir = innerRadius();
     const n = pointsCount();
 
-    for (let i = 0; i < n * 2; i++) {
-      const angle = (i * Math.PI) / n + rad;
-      const r = i % 2 === 0 ? or : ir;
-      pts.push({
-        x: r * Math.cos(angle),
-        y: r * Math.sin(angle),
-      });
+    // To create a hexagram-like shape with overlapping parts, 
+    // we render multiple overlapping regular polygons.
+    // For a standard hexagram (6 points), it's 2 triangles.
+    // We generalize this by rendering polygons with n/2 sides if possible.
+    const polygons: { x: number; y: number }[][] = [];
+    
+    const rotate = (p: { x: number; y: number }) => ({
+      x: p.x * Math.cos(rad) - p.y * Math.sin(rad),
+      y: p.x * Math.sin(rad) + p.y * Math.cos(rad),
+    });
+
+    // We use two overlapping regular polygons to get the "connected inner core" look
+    // each having `n` vertices but offset in rotation
+    const poly1: { x: number; y: number }[] = [];
+    const poly2: { x: number; y: number }[] = [];
+    
+    for (let i = 0; i < n; i++) {
+      const angle1 = (i * 2 * Math.PI) / n;
+      const angle2 = angle1 + Math.PI / n;
+      
+      poly1.push(rotate({ x: s * Math.cos(angle1), y: s * Math.sin(angle1) }));
+      poly2.push(rotate({ x: s * Math.cos(angle2), y: s * Math.sin(angle2) }));
     }
-    return pts;
+
+    return [poly1, poly2];
   };
 
   return (
-    <For each={points()}>
-      {(p, i) => {
-        const next = points()[(i() + 1) % points().length];
-        return <CellLine x1={p.x} y1={p.y} x2={next.x} y2={next.y} />;
-      }}
-    </For>
+    <>
+      <For each={points()}>
+        {(poly) => (
+          <For each={poly}>
+            {(p, i) => {
+              const next = poly[(i() + 1) % poly.length];
+              return <CellLine x1={p.x} y1={p.y} x2={next.x} y2={next.y} />;
+            }}
+          </For>
+        )}
+      </For>
+    </>
   );
 };
 
 const SettingsComponent = (): JSX.Element => (
   <>
     <Slider label="Points" min={3} max={32} currentVal={pointsCount} updateVal={setPointsCount} />
-    <Slider label="Outer Radius" min={10} max={250} currentVal={outerRadius} updateVal={setOuterRadius} />
-    <Slider label="Inner Radius" min={5} max={200} currentVal={innerRadius} updateVal={setInnerRadius} />
+    <Slider label="Radius" min={10} max={250} currentVal={outerRadius} updateVal={setOuterRadius} />
     <Slider label="Rotation" min={0} max={360} currentVal={rotation} updateVal={setRotation} />
   </>
 );
