@@ -4,12 +4,14 @@ import CellLine from './helpers/CellLine.tsx';
 import Slider from '../ui-components/Slider.tsx';
 
 const [outerRadius, setOuterRadius] = createSignal(50);
+const [innerRadius, setInnerRadius] = createSignal(25);
 const [pointsCount, setPointsCount] = createSignal(6);
 const [rotation, setRotation] = createSignal(0);
 
 const ShapeComponent = (): JSX.Element => {
   const points = () => {
-    const s = outerRadius();
+    const or = outerRadius();
+    const ir = innerRadius();
     const rad = (rotation() * Math.PI) / 180;
     const n = pointsCount();
 
@@ -25,8 +27,8 @@ const ShapeComponent = (): JSX.Element => {
       const angle1 = (i * 2 * Math.PI) / n;
       const angle2 = angle1 + Math.PI / n;
       
-      poly1.push(rotate({ x: s * Math.cos(angle1), y: s * Math.sin(angle1) }));
-      poly2.push(rotate({ x: s * Math.cos(angle2), y: s * Math.sin(angle2) }));
+      poly1.push(rotate({ x: or * Math.cos(angle1), y: or * Math.sin(angle1) }));
+      poly2.push(rotate({ x: ir * Math.cos(angle2), y: ir * Math.sin(angle2) }));
     }
 
     return [poly1, poly2];
@@ -51,7 +53,8 @@ const ShapeComponent = (): JSX.Element => {
 const SettingsComponent = (): JSX.Element => (
   <>
     <Slider label="Points" min={3} max={32} currentVal={pointsCount} updateVal={setPointsCount} />
-    <Slider label="Radius" min={10} max={250} currentVal={outerRadius} updateVal={setOuterRadius} />
+    <Slider label="Outer Radius" min={10} max={250} currentVal={outerRadius} updateVal={setOuterRadius} />
+    <Slider label="Inner Radius" min={10} max={250} currentVal={innerRadius} updateVal={setInnerRadius} />
     <Slider label="Rotation" min={0} max={360} currentVal={rotation} updateVal={setRotation} />
   </>
 );
