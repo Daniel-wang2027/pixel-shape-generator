@@ -4,18 +4,23 @@ import CellLine from './helpers/CellLine.tsx';
 import Slider from '../ui-components/Slider.tsx';
 
 const [thickness, setThickness] = createSignal(20);
-const [length, setLength] = createSignal(80);
+const [horizontalLength, setHorizontalLength] = createSignal(80);
+const [verticalLength, setVerticalLength] = createSignal(80);
+const [verticalOffset, setVerticalOffset] = createSignal(0);
 const [rotation, setRotation] = createSignal(0);
 
 const ShapeComponent = (): JSX.Element => {
   const points = () => {
     const t = thickness() / 2;
-    const l = length() / 2;
+    const hl = horizontalLength() / 2;
+    const vl = verticalLength() / 2;
+    const offset = verticalOffset();
+
     const pts = [
-      { x: -t, y: -l }, { x: t, y: -l }, { x: t, y: -t },
-      { x: l, y: -t }, { x: l, y: t }, { x: t, y: t },
-      { x: t, y: l }, { x: -t, y: l }, { x: -t, y: t },
-      { x: -l, y: t }, { x: -l, y: -t }, { x: -t, y: -t },
+      { x: -t, y: -vl + offset }, { x: t, y: -vl + offset }, { x: t, y: -t + offset },
+      { x: hl, y: -t + offset }, { x: hl, y: t + offset }, { x: t, y: t + offset },
+      { x: t, y: vl + offset }, { x: -t, y: vl + offset }, { x: -t, y: t + offset },
+      { x: -hl, y: t + offset }, { x: -hl, y: -t + offset }, { x: -t, y: -t + offset },
     ];
     const rad = (rotation() * Math.PI) / 180;
 
@@ -39,7 +44,9 @@ const SettingsComponent = (): JSX.Element => {
   return (
     <>
       <Slider label="Thickness" min={5} max={100} currentVal={thickness} updateVal={setThickness} />
-      <Slider label="Length" min={10} max={400} currentVal={length} updateVal={setLength} />
+      <Slider label="Horizontal Length" min={10} max={400} currentVal={horizontalLength} updateVal={setHorizontalLength} />
+      <Slider label="Vertical Length" min={10} max={400} currentVal={verticalLength} updateVal={setVerticalLength} />
+      <Slider label="Vertical Offset" min={-200} max={200} currentVal={verticalOffset} updateVal={setVerticalOffset} />
       <Slider label="Rotation" min={0} max={360} currentVal={rotation} updateVal={setRotation} />
     </>
   );
