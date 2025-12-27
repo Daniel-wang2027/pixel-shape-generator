@@ -4,7 +4,6 @@ import CellLine from './helpers/CellLine.tsx';
 import Slider from '../ui-components/Slider.tsx';
 
 const [outerRadius, setOuterRadius] = createSignal(50);
-const [innerRadius, setInnerRadius] = createSignal(25);
 const [pointsCount, setPointsCount] = createSignal(6);
 const [rotation, setRotation] = createSignal(0);
 
@@ -14,19 +13,11 @@ const ShapeComponent = (): JSX.Element => {
     const rad = (rotation() * Math.PI) / 180;
     const n = pointsCount();
 
-    // To create a hexagram-like shape with overlapping parts, 
-    // we render multiple overlapping regular polygons.
-    // For a standard hexagram (6 points), it's 2 triangles.
-    // We generalize this by rendering polygons with n/2 sides if possible.
-    const polygons: { x: number; y: number }[][] = [];
-    
     const rotate = (p: { x: number; y: number }) => ({
       x: p.x * Math.cos(rad) - p.y * Math.sin(rad),
       y: p.x * Math.sin(rad) + p.y * Math.cos(rad),
     });
 
-    // We use two overlapping regular polygons to get the "connected inner core" look
-    // each having `n` vertices but offset in rotation
     const poly1: { x: number; y: number }[] = [];
     const poly2: { x: number; y: number }[] = [];
     
