@@ -95,8 +95,6 @@ function App() {
     Ring,
   ];
 
-  const [selectedShape, setSelectedShape] = createSignal<Shape>(shapes[0]);
-
   const [cellCount, setCellCount] = createSignal(0);
   const [isCountingCells, setIsCountingCells] = createSignal(false);
   const [showGrid, setShowGrid] = createSignal(true);
@@ -354,20 +352,21 @@ function App() {
                     <button style={{ color: 'red' }} onClick={() => setLayers(layers().filter(l => l.id !== layer.id))}>Remove</button>
                   </Show>
                 </div>
-                <Select
-                  label="Shape"
-                  selectedOption={() => layer.shape}
-                  updateSelectedOption={(newShape) => {
-                    const newLayers = [...layers()];
-                    newLayers[index()] = { ...layer, shape: newShape };
-                    setLayers(newLayers);
-                    if (index() === 0) setSelectedShape(newShape); // Backward compat for some logic
-                  }}
-                  options={shapes.sort((a, b) => a.name.localeCompare(b.name))}
-                  extractOptionValue={(shape) => shape.name}
-                  extractOptionLabel={(shape) => shape.name}
-                />
-                {layer.shape.settingsComponent({})}
+                  <Select
+                    label="Shape"
+                    selectedOption={() => layer.shape}
+                    updateSelectedOption={(newShape: Shape) => {
+                      const newLayers = [...layers()];
+                      newLayers[index()] = { ...layer, shape: newShape };
+                      setLayers(newLayers);
+                    }}
+                    options={shapes.sort((a, b) => a.name.localeCompare(b.name))}
+                    extractOptionValue={(shape: Shape) => shape.name}
+                    extractOptionLabel={(shape: Shape) => shape.name}
+                  />
+                  <div style={{ display: 'flex', 'flex-direction': 'column', gap: '0.5rem', 'margin-top': '0.5rem' }}>
+                    {layer.shape.settingsComponent({})}
+                  </div>
               </div>
             )}
           </For>
