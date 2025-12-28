@@ -286,7 +286,7 @@ function App() {
           extractOptionLabel={(shape) => shape.name}
         />
         <div style={{ display: 'flex', 'flex-direction': 'column', gap: '1rem', 'margin-bottom': '1rem' }}>
-          <Switch label="Show Grid" checked={showGrid} onChange={setShowGrid} />
+          <Switch label="Show Grid" currentVal={showGrid} updateVal={setShowGrid} />
           <Select
             label="Symmetry"
             selectedOption={symmetry}

@@ -6,6 +6,7 @@ const CellLine = (props: {
   y1: number;
   x2: number;
   y2: number;
+  thickness?: number;
   debug?: boolean;
 }) => {
   const dx = props.x2 - props.x1;
@@ -13,13 +14,37 @@ const CellLine = (props: {
   const steps = Math.max(Math.abs(dx), Math.abs(dy));
   const sx = dx / steps;
   const sy = dy / steps;
+
+  const thickness = () => props.thickness ?? 1;
+
+  const points = () => {
+    const pts: { x: number; y: number }[] = [];
+    const t = thickness();
+    const half = (t - 1) / 2;
+
+    for (let i = 0; i <= steps; i++) {
+      const baseX = props.x1 + sx * i;
+      const baseY = props.y1 + sy * i;
+
+      for (let tx = -Math.floor(half); tx <= Math.ceil(half); tx++) {
+        for (let ty = -Math.floor(half); ty <= Math.ceil(half); ty++) {
+          pts.push({
+            x: Math.round(baseX + tx),
+            y: Math.round(baseY + ty),
+          });
+        }
+      }
+    }
+    return pts;
+  };
+
   return (
-    <For each={Array.from({ length: steps + 1 })}>
-      {(_, i) => (
+    <For each={points()}>
+      {(p) => (
         <Cell
           debug={props.debug}
-          x={Math.round(props.x1 + sx * i())}
-          y={Math.round(props.y1 + sy * i())}
+          x={p.x}
+          y={p.y}
         />
       )}
     </For>
