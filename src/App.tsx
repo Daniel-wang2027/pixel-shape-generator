@@ -101,6 +101,9 @@ function App() {
   const [isCountingCells, setIsCountingCells] = createSignal(false);
   const [showGrid, setShowGrid] = createSignal(true);
   const [symmetry, setSymmetry] = createSignal('none');
+  const [layers, setLayers] = createSignal([{ id: 0, shape: shapes[0] }]);
+  const [syncRotation, setSyncRotation] = createSignal(true);
+  const [globalRotation, setGlobalRotation] = createSignal(0);
 
   // debounced cell counting on shape renders
   onMount(() => {
@@ -222,31 +225,37 @@ function App() {
             height={outputSize().height}
             viewBox={`${camera().position.x * camera().zoom} ${camera().position.y * camera().zoom} ${camera().zoom * outputSize().width} ${camera().zoom * outputSize().height}`}
           >
-            <g>
-              {selectedShape().shapeComponent({})}
-            </g>
-            <Show when={symmetry() !== 'none'}>
-              <g transform={symmetry() === 'horizontal' || symmetry() === 'both' ? 'scale(1, -1)' : ''}>
-                <Show when={symmetry() === 'horizontal' || symmetry() === 'both'}>
-                  {selectedShape().shapeComponent({})}
-                </Show>
-              </g>
-              <g transform={symmetry() === 'vertical' || symmetry() === 'both' ? 'scale(-1, 1)' : ''}>
-                <Show when={symmetry() === 'vertical' || symmetry() === 'both'}>
-                  {selectedShape().shapeComponent({})}
-                </Show>
-              </g>
-              <g transform={symmetry() === 'both' ? 'scale(-1, -1)' : ''}>
-                <Show when={symmetry() === 'both'}>
-                  {selectedShape().shapeComponent({})}
-                </Show>
-              </g>
-              <Show when={symmetry() === 'radial-4'}>
-                <g transform="rotate(90)">{selectedShape().shapeComponent({})}</g>
-                <g transform="rotate(180)">{selectedShape().shapeComponent({})}</g>
-                <g transform="rotate(270)">{selectedShape().shapeComponent({})}</g>
-              </Show>
-            </Show>
+            <For each={layers()}>
+              {(layer) => (
+                <g transform={`rotate(${syncRotation() ? globalRotation() : 0})`}>
+                  <g>
+                    {layer.shape.shapeComponent({})}
+                  </g>
+                  <Show when={symmetry() !== 'none'}>
+                    <g transform={symmetry() === 'horizontal' || symmetry() === 'both' ? 'scale(1, -1)' : ''}>
+                      <Show when={symmetry() === 'horizontal' || symmetry() === 'both'}>
+                        {layer.shape.shapeComponent({})}
+                      </Show>
+                    </g>
+                    <g transform={symmetry() === 'vertical' || symmetry() === 'both' ? 'scale(-1, 1)' : ''}>
+                      <Show when={symmetry() === 'vertical' || symmetry() === 'both'}>
+                        {layer.shape.shapeComponent({})}
+                      </Show>
+                    </g>
+                    <g transform={symmetry() === 'both' ? 'scale(-1, -1)' : ''}>
+                      <Show when={symmetry() === 'both'}>
+                        {layer.shape.shapeComponent({})}
+                      </Show>
+                    </g>
+                    <Show when={symmetry() === 'radial-4'}>
+                      <g transform="rotate(90)">{layer.shape.shapeComponent({})}</g>
+                      <g transform="rotate(180)">{layer.shape.shapeComponent({})}</g>
+                      <g transform="rotate(270)">{layer.shape.shapeComponent({})}</g>
+                    </Show>
+                  </Show>
+                </g>
+              )}
+            </For>
           </svg>
         <svg
           data-layer-name="grid"
@@ -307,15 +316,8 @@ function App() {
         </span>
       </div>
       <div id="settings-container" aria-label="Shape Settings">
-        <Select
-          label="Shape"
-          selectedOption={selectedShape}
-          updateSelectedOption={setSelectedShape}
-          options={shapes.sort((a, b) => a.name.localeCompare(b.name))}
-          extractOptionValue={(shape) => shape.name}
-          extractOptionLabel={(shape) => shape.name}
-        />
-        <div style={{ display: 'flex', 'flex-direction': 'column', gap: '1rem', 'margin-bottom': '1rem' }}>
+        <div style={{ display: 'flex', 'flex-direction': 'column', gap: '1rem', 'margin-bottom': '1rem', padding: '1rem', border: '1px solid #ccc', 'border-radius': '8px' }}>
+          <h3 style={{ margin: 0 }}>Global Settings</h3>
           <Switch label="Show Grid" currentVal={showGrid} updateVal={setShowGrid} />
           <Select
             label="Symmetry"
@@ -325,8 +327,51 @@ function App() {
             extractOptionValue={(s) => s}
             extractOptionLabel={(s) => s.charAt(0).toUpperCase() + s.slice(1)}
           />
+          <Switch label="Sync Rotation" currentVal={syncRotation} updateVal={setSyncRotation} />
+          <Show when={syncRotation()}>
+            <div style={{ display: 'flex', 'flex-direction': 'column', gap: '0.5rem' }}>
+              <label>Global Rotation: {globalRotation()}°</label>
+              <input 
+                type="range" min="0" max="360" 
+                value={globalRotation()} 
+                onInput={(e) => setGlobalRotation(parseInt(e.currentTarget.value))} 
+              />
+            </div>
+          </Show>
         </div>
-        {selectedShape().settingsComponent({})}
+
+        <div style={{ display: 'flex', 'flex-direction': 'column', gap: '1rem', 'margin-bottom': '1rem' }}>
+          <div style={{ display: 'flex', 'justify-content': 'space-between', 'align-items': 'center' }}>
+            <h3 style={{ margin: 0 }}>Layers</h3>
+            <button onClick={() => setLayers([...layers(), { id: Date.now(), shape: shapes[0] }])}>+ Add Layer</button>
+          </div>
+          <For each={layers()}>
+            {(layer, index) => (
+              <div style={{ padding: '0.5rem', border: '1px solid #eee', 'border-radius': '4px' }}>
+                <div style={{ display: 'flex', 'justify-content': 'space-between', 'margin-bottom': '0.5rem' }}>
+                  <span>Layer {index() + 1}</span>
+                  <Show when={layers().length > 1}>
+                    <button style={{ color: 'red' }} onClick={() => setLayers(layers().filter(l => l.id !== layer.id))}>Remove</button>
+                  </Show>
+                </div>
+                <Select
+                  label="Shape"
+                  selectedOption={() => layer.shape}
+                  updateSelectedOption={(newShape) => {
+                    const newLayers = [...layers()];
+                    newLayers[index()] = { ...layer, shape: newShape };
+                    setLayers(newLayers);
+                    if (index() === 0) setSelectedShape(newShape); // Backward compat for some logic
+                  }}
+                  options={shapes.sort((a, b) => a.name.localeCompare(b.name))}
+                  extractOptionValue={(shape) => shape.name}
+                  extractOptionLabel={(shape) => shape.name}
+                />
+                {layer.shape.settingsComponent({})}
+              </div>
+            )}
+          </For>
+        </div>
         <div class="button-group">
           <span aria-hidden="true">Download</span>
           <button onClick={downloadSVG} aria-label="Download as SVG">
