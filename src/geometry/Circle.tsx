@@ -6,6 +6,7 @@ import Slider from '../ui-components/Slider.tsx';
 import Switch from '../ui-components/Switch.tsx';
 
 const [diameter, setDiameter] = createSignal(25);
+const [thickness, setThickness] = createSignal(1);
 
 const [showGuide, setShowGuide] = createSignal(false);
 const [showBounds, setShowBounds] = createSignal(false);
@@ -40,7 +41,7 @@ const ShapeComponent = (): JSX.Element => {
           <CellLine debug x1={1} y1={top} x2={1} y2={bottom} />
         </Show>
       </Show>
-      <CellCircle x={0} y={0} diameter={d} />
+      <CellCircle x={0} y={0} diameter={d} thickness={thickness()} />
       <Show when={showGuide()}>
         <circle cx={offset + 0.5} cy={offset + 0.5} r={r} class="draw-guide" />
       </Show>
@@ -57,6 +58,13 @@ const SettingsComponent = (): JSX.Element => {
         max={500}
         currentVal={diameter}
         updateVal={setDiameter}
+      />
+      <Slider
+        label="Thickness"
+        min={1}
+        max={50}
+        currentVal={thickness}
+        updateVal={setThickness}
       />
       <Switch
         label="Show Bounds"

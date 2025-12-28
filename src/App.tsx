@@ -210,14 +210,38 @@ function App() {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <svg
-          data-layer-name="cells"
-          width={outputSize().width}
-          height={outputSize().height}
-          viewBox={`${camera().position.x * camera().zoom} ${camera().position.y * camera().zoom} ${camera().zoom * outputSize().width} ${camera().zoom * outputSize().height}`}
-        >
-          {selectedShape().shapeComponent({})}
-        </svg>
+          <svg
+            data-layer-name="cells"
+            width={outputSize().width}
+            height={outputSize().height}
+            viewBox={`${camera().position.x * camera().zoom} ${camera().position.y * camera().zoom} ${camera().zoom * outputSize().width} ${camera().zoom * outputSize().height}`}
+          >
+            <g>
+              {selectedShape().shapeComponent({})}
+            </g>
+            <Show when={symmetry() !== 'none'}>
+              <g transform={symmetry() === 'horizontal' || symmetry() === 'both' ? 'scale(1, -1)' : ''}>
+                <Show when={symmetry() === 'horizontal' || symmetry() === 'both'}>
+                  {selectedShape().shapeComponent({})}
+                </Show>
+              </g>
+              <g transform={symmetry() === 'vertical' || symmetry() === 'both' ? 'scale(-1, 1)' : ''}>
+                <Show when={symmetry() === 'vertical' || symmetry() === 'both'}>
+                  {selectedShape().shapeComponent({})}
+                </Show>
+              </g>
+              <g transform={symmetry() === 'both' ? 'scale(-1, -1)' : ''}>
+                <Show when={symmetry() === 'both'}>
+                  {selectedShape().shapeComponent({})}
+                </Show>
+              </g>
+              <Show when={symmetry() === 'radial-4'}>
+                <g transform="rotate(90)">{selectedShape().shapeComponent({})}</g>
+                <g transform="rotate(180)">{selectedShape().shapeComponent({})}</g>
+                <g transform="rotate(270)">{selectedShape().shapeComponent({})}</g>
+              </Show>
+            </Show>
+          </svg>
         <svg
           data-layer-name="grid"
           width={outputSize().width}

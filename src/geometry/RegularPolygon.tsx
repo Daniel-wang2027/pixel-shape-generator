@@ -7,6 +7,7 @@ import Switch from '../ui-components/Switch.tsx';
 const [sides, setSides] = createSignal(5);
 const [diameter, setDiameter] = createSignal(25);
 const [rotation, setRotation] = createSignal(0);
+const [thickness, setThickness] = createSignal(1);
 const [showAngleBisectors, setShowAngleBisectors] = createSignal(false);
 const [showPerpendicularBisectors, setShowPerpendicularBisectors] =
   createSignal(false);
@@ -50,6 +51,7 @@ const ShapeComponent = (): JSX.Element => {
             y1={verts[i()].y}
             x2={verts[(i() + 1) % sides()].x}
             y2={verts[(i() + 1) % sides()].y}
+            thickness={thickness()}
           />
         )}
       </For>
@@ -86,6 +88,13 @@ const SettingsComponent = (): JSX.Element => {
         max={360}
         currentVal={rotation}
         updateVal={setRotation}
+      />
+      <Slider
+        label="Thickness"
+        min={1}
+        max={50}
+        currentVal={thickness}
+        updateVal={setThickness}
       />
       <Switch
         label="Show Angle Bisectors"
