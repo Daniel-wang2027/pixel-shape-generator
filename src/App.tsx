@@ -50,6 +50,7 @@ import {
   handleWheel,
 } from './pointer.ts';
 import Select from './ui-components/Select.tsx';
+import Switch from './ui-components/Switch.tsx';
 import './App.css';
 
 function debounce<T extends (...args: any[]) => any>(
@@ -92,6 +93,8 @@ function App() {
 
   const [cellCount, setCellCount] = createSignal(0);
   const [isCountingCells, setIsCountingCells] = createSignal(false);
+  const [showGrid, setShowGrid] = createSignal(true);
+  const [symmetry, setSymmetry] = createSignal('none');
 
   // debounced cell counting on shape renders
   onMount(() => {
@@ -219,6 +222,7 @@ function App() {
           data-layer-name="grid"
           width={outputSize().width}
           height={outputSize().height}
+          style={{ display: showGrid() ? 'block' : 'none' }}
           viewBox={`${camera().position.x % (outputSize().width / ((outputSize().width * camera().zoom) / scale()))} ${camera().position.y % (outputSize().height / ((outputSize().height * camera().zoom) / scale()))} ${outputSize().width} ${outputSize().height}`}
         >
           <For each={Array.from({ length: numVerticalGridLines() })}>
@@ -281,6 +285,17 @@ function App() {
           extractOptionValue={(shape) => shape.name}
           extractOptionLabel={(shape) => shape.name}
         />
+        <div style={{ display: 'flex', 'flex-direction': 'column', gap: '1rem', 'margin-bottom': '1rem' }}>
+          <Switch label="Show Grid" checked={showGrid} onChange={setShowGrid} />
+          <Select
+            label="Symmetry"
+            selectedOption={symmetry}
+            updateSelectedOption={setSymmetry}
+            options={['none', 'horizontal', 'vertical', 'both', 'radial-4']}
+            extractOptionValue={(s) => s}
+            extractOptionLabel={(s) => s.charAt(0).toUpperCase() + s.slice(1)}
+          />
+        </div>
         {selectedShape().settingsComponent({})}
         <div class="button-group">
           <span aria-hidden="true">Download</span>
