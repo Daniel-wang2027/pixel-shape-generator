@@ -15,31 +15,24 @@ const ShapeComponent = (): JSX.Element => {
     const ir = innerRadius();
     const rad = (rotation() * Math.PI) / 180;
     const n = pointsCount();
-    const th = thickness();
 
     const rotate = (p: { x: number; y: number }) => ({
       x: p.x * Math.cos(rad) - p.y * Math.sin(rad),
       y: p.x * Math.sin(rad) + p.y * Math.cos(rad),
     });
 
-    const polys: { x: number; y: number }[][] = [];
+    const poly1: { x: number; y: number }[] = [];
+    const poly2: { x: number; y: number }[] = [];
     
-    for (let t = 0; t < th; t++) {
-      const poly1: { x: number; y: number }[] = [];
-      const poly2: { x: number; y: number }[] = [];
-      const offset = t;
+    for (let i = 0; i < n; i++) {
+      const angle1 = (i * 2 * Math.PI) / n;
+      const angle2 = angle1 + Math.PI / n;
       
-      for (let i = 0; i < n; i++) {
-        const angle1 = (i * 2 * Math.PI) / n;
-        const angle2 = angle1 + Math.PI / n;
-        
-        poly1.push(rotate({ x: (or - offset) * Math.cos(angle1), y: (or - offset) * Math.sin(angle1) }));
-        poly2.push(rotate({ x: (ir - offset) * Math.cos(angle2), y: (ir - offset) * Math.sin(angle2) }));
-      }
-      polys.push(poly1, poly2);
+      poly1.push(rotate({ x: or * Math.cos(angle1), y: or * Math.sin(angle1) }));
+      poly2.push(rotate({ x: ir * Math.cos(angle2), y: ir * Math.sin(angle2) }));
     }
 
-    return polys;
+    return [poly1, poly2];
   };
 
   return (
@@ -49,7 +42,7 @@ const ShapeComponent = (): JSX.Element => {
           <For each={poly}>
             {(p, i) => {
               const next = poly[(i() + 1) % poly.length];
-              return <CellLine x1={p.x} y1={p.y} x2={next.x} y2={next.y} />;
+              return <CellLine x1={p.x} y1={p.y} x2={next.x} y2={next.y} thickness={thickness()} />;
             }}
           </For>
         )}
