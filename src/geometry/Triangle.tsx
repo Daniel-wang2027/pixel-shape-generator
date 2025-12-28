@@ -11,9 +11,6 @@ const ShapeComponent = (): JSX.Element => {
   const points = () => {
     const b = base();
     const h = height();
-    const th = thickness();
-    
-    // Centered triangle
     const v1 = { x: 0, y: -h / 2 };
     const v2 = { x: -b / 2, y: h / 2 };
     const v3 = { x: b / 2, y: h / 2 };

@@ -28,6 +28,8 @@ import Trapezoid from './geometry/Trapezoid.tsx';
 import LShape from './geometry/LShape.tsx';
 import Hexagram from './geometry/Hexagram.tsx';
 import Triangle from './geometry/Triangle.tsx';
+import Oval from './geometry/Oval.tsx';
+import Ring from './geometry/Ring.tsx';
 
 import { downloadSVG, downloadPNG, downloadPBM } from './download.ts';
 import {
@@ -89,6 +91,8 @@ function App() {
     LShape,
     Hexagram,
     Triangle,
+    Oval,
+    Ring,
   ];
 
   const [selectedShape, setSelectedShape] = createSignal<Shape>(shapes[0]);
