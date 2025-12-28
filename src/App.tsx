@@ -7,6 +7,8 @@ import {
   Show,
 } from 'solid-js';
 
+import { globalRotation, setGlobalRotation, syncRotation, setSyncRotation } from './globalSettings';
+
 import type { Shape } from './types';
 
 import Rectangle from './geometry/Rectangle.tsx';

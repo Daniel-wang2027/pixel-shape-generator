@@ -1,0 +1,3409 @@
+
+
+================================================
+FILE: src/App.css
+================================================
+:root {
+  --backdrop-color: #fff;
+  --cell-color: #5cceee;
+  --cell-highlight-color: #a33111;
+  --cell-debug-color: #eee75c;
+  --cell-debug-highlight-color: #ea7b21;
+  --draw-guide: #ff0000;
+  --grid-line-color: #d4d4d4;
+  --text-color: #000;
+  --ui-background-color: #fdfdfd;
+  --ui-hover-color: #f8f4f4;
+  --ui-border-color: #d1d5db;
+  --ui-void-color: #d0d4de;
+  --github-mark: url('/github-mark.svg');
+  --ui-border-radius: 8px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --backdrop-color: rgb(9 9 11);
+    --cell-color: #1186a6;
+    --cell-highlight-color: #942c10;
+    --cell-debug-color: #8e8e0e;
+    --cell-debug-highlight-color: #875310;
+    --draw-guide: #ff0000;
+    --grid-line-color: #2f2f2f;
+    --text-color: #dadada;
+    --ui-background-color: rgb(24 24 27);
+    --ui-hover-color: #2a2a2f;
+    --ui-border-color: #606060;
+    --ui-void-color: #4e4e4e;
+    --github-mark: url('/github-mark-white.svg');
+  }
+}
+
+#repo-link {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 32px;
+  height: 32px;
+  margin: 16px;
+  background-size: 32px;
+  background-image: var(--github-mark);
+  background-repeat: no-repeat;
+  border-radius: 50%;
+  text-indent: -99999px;
+}
+
+span,
+label,
+p {
+  color: var(--text-color);
+}
+
+html {
+  width: 100%;
+  height: 100%;
+  font-family: system-ui, sans-serif;
+}
+
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  background-color: var(--backdrop-color);
+  scrollbar-color: var(--ui-void-color) var(--ui-background-color);
+}
+
+#root {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+#output-container {
+  position: relative;
+  box-sizing: border-box;
+  margin: 16px;
+  border: 1px solid var(--ui-border-color);
+  border-radius: var(--ui-border-radius);
+  overflow: hidden;
+  background-color: var(--ui-background-color);
+  user-select: none;
+}
+
+#output-container > svg {
+  position: absolute;
+}
+
+#output-container > svg:not([data-layer-name='cells']) {
+  pointer-events: none;
+}
+
+.cell {
+  fill: var(--cell-color);
+}
+
+.cell.debug {
+  fill: var(--cell-debug-color);
+}
+
+rect.highlighted {
+  fill: var(--cell-highlight-color);
+}
+
+.cell.debug.highlighted {
+  fill: var(--cell-debug-highlight-color);
+}
+
+.draw-guide {
+  stroke: var(--draw-guide);
+  stroke-width: 0.1;
+  fill: none;
+  pointer-events: none;
+}
+
+.grid-line {
+  stroke: var(--grid-line-color);
+}
+
+#scale {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  margin: 4px;
+  line-height: 16px;
+  font-size: 16px;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+button:hover {
+  touch-action: manipulation;
+  background-color: var(--ui-hover-color);
+}
+
+button {
+  width: fit-content;
+  padding: 10px;
+  border: 1px solid var(--ui-border-color);
+  border-radius: var(--ui-border-radius);
+  background-color: var(--ui-background-color);
+  color: var(--text-color);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#zoom-controls {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin: 16px;
+}
+
+#zoom-controls > button {
+  margin: 0;
+  padding: 4px 10px;
+  border: 1px solid var(--ui-border-color);
+  border-radius: 0;
+  font-size: 24px;
+  color: var(--text-color);
+}
+
+#zoom-controls > button:first-child {
+  border-bottom-width: 0;
+  border-radius: var(--ui-border-radius) var(--ui-border-radius) 0 0;
+}
+
+#zoom-controls > button:last-child {
+  border-radius: 0 0 var(--ui-border-radius) var(--ui-border-radius);
+}
+
+#pointer-coords {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 4px;
+  line-height: 16px;
+  font-size: 16px;
+  pointer-events: none;
+}
+
+#cell-count {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 4px;
+  line-height: 16px;
+  font-size: 16px;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+#settings-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 16px;
+  position: relative;
+  padding: 16px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.button-group > button {
+  border-radius: 0;
+  border-width: 1px 1px 1px 0;
+}
+
+.button-group > button:last-child {
+  border-radius: 0 var(--ui-border-radius) var(--ui-border-radius) 0;
+  border-right-width: 1px;
+}
+
+.button-group > span {
+  background-color: var(--ui-void-color);
+  padding: 10px;
+  border: 1px solid var(--ui-border-color);
+  border-radius: var(--ui-border-radius) 0 0 var(--ui-border-radius);
+}
+
+.button-group {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  width: min-content;
+  padding: 0;
+}
+
+@media (orientation: landscape) {
+  #root {
+    flex-direction: row;
+  }
+  #output-container {
+    flex: 2;
+    max-width: 60%;
+    margin-right: 0;
+  }
+}
+
+@media (orientation: portrait) {
+  #root {
+    flex-direction: column;
+  }
+  #output-container {
+    width: 100%;
+    aspect-ratio: 1;
+    max-height: 60%;
+    margin: 0;
+    border-width: 1px 0 1px 0;
+    border-radius: 0;
+  }
+}
+
+
+================================================
+FILE: src/camera.ts
+================================================
+import { createSignal } from 'solid-js';
+import { Position } from './types';
+import { outputSize } from './App';
+
+const MIN_CELL_SIZE = 10;
+const MIN_ZOOM = 16 / MIN_CELL_SIZE;
+const MAX_ZOOM = 0.1 / MIN_CELL_SIZE;
+
+interface CameraState {
+  position: Position;
+  zoom: number;
+  dragStartPosition: Position | null;
+  dragStartZoom: number | null;
+}
+
+const [camera, setCamera] = createSignal<CameraState>({
+  position: {
+    x: 0,
+    y: 0,
+  },
+  zoom: 0.1,
+  dragStartPosition: null,
+  dragStartZoom: null,
+});
+
+const centerCamera = (): void => {
+  setCamera({
+    ...camera(),
+    position: {
+      x: -outputSize().width / 2,
+      y: -outputSize().height / 2,
+    },
+  });
+};
+
+const panCamera = (dx: number, dy: number): void => {
+  setCamera({
+    ...camera(),
+    position: {
+      x: camera().position.x + dx,
+      y: camera().position.y + dy,
+    },
+  });
+};
+
+const changeZoom = (
+  factor: number,
+  x = outputSize().width / 2,
+  y = outputSize().height / 2
+): void => {
+  if (camera().zoom * factor < MAX_ZOOM) factor = MAX_ZOOM / camera().zoom;
+  if (camera().zoom * factor > MIN_ZOOM) factor = MIN_ZOOM / camera().zoom;
+  const newCoords = {
+    x: (camera().position.x + x) / factor - x,
+    y: (camera().position.y + y) / factor - y,
+  };
+  setCamera({
+    ...camera(),
+    zoom: camera().zoom * factor,
+    position: newCoords,
+  });
+};
+
+export {
+  camera,
+  setCamera,
+  centerCamera,
+  panCamera,
+  changeZoom,
+  MIN_CELL_SIZE,
+  MIN_ZOOM,
+  MAX_ZOOM,
+};
+
+
+================================================
+FILE: src/download.ts
+================================================
+const SVGNS = 'http://www.w3.org/2000/svg';
+
+type CellParsed = {
+  x: number;
+  y: number;
+};
+
+type SvgData = {
+  svg: SVGSVGElement;
+  minX: number;
+  minY: number;
+  maxX: number;
+  maxY: number;
+  width: number;
+  height: number;
+  cellsPositive: CellParsed[];
+  fileName: string;
+};
+
+const getSvgData = (): SvgData => {
+  const svg = document
+    .querySelector('svg[data-layer-name="cells"]')!
+    .cloneNode(true) as SVGSVGElement;
+  svg.removeAttribute('data-layer-name');
+
+  const cellsParsed = [...svg.querySelectorAll('rect')].map((cell) => ({
+    x: Number(cell.getAttribute('x')),
+    y: Number(cell.getAttribute('y')),
+  }));
+
+  const minX = Math.min(...cellsParsed.map((cell) => cell.x));
+  const minY = Math.min(...cellsParsed.map((cell) => cell.y));
+  const maxX = Math.max(...cellsParsed.map((cell) => cell.x));
+  const maxY = Math.max(...cellsParsed.map((cell) => cell.y));
+
+  const cellsPositive = cellsParsed.map((cell) => ({
+    x: cell.x + Math.abs(minX),
+    y: cell.y + Math.abs(minY),
+  }));
+
+  const fileName = [
+    ...document.querySelectorAll(`input:not([type='range']), select`),
+  ]
+    .map((elem) => (elem as HTMLInputElement | HTMLSelectElement).value)
+    .join('-')
+    .replace(/\s/g, '')
+    .replace(/\./g, '_');
+
+  return {
+    svg,
+    cellsPositive,
+    minX,
+    minY,
+    maxX,
+    maxY,
+    height: maxY - minY + 1,
+    width: maxX - minX + 1,
+    fileName,
+  };
+};
+
+const downloadBlob = (blob: Blob, fileName: string): void => {
+  const a = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  a.href = url;
+  a.download = fileName;
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
+const downloadSVG = (): void => {
+  const { svg, minX, minY, maxX, maxY, width, height, fileName } = getSvgData();
+  const cellSize = 10;
+
+  svg.setAttribute('width', `${width * cellSize}`);
+  svg.setAttribute('height', `${height * cellSize}`);
+  svg.setAttribute('viewBox', `${minX} ${minY} ${width} ${height}`);
+
+  const addGridLine = (x1: number, y1: number, x2: number, y2: number) => {
+    const gridLine = document.createElementNS(SVGNS, 'line');
+    gridLine.setAttribute('x1', String(x1));
+    gridLine.setAttribute('y1', String(y1));
+    gridLine.setAttribute('x2', String(x2));
+    gridLine.setAttribute('y2', String(y2));
+    gridLine.setAttribute('class', 'grid-line');
+    gridLine.setAttribute('stroke', 'black');
+    gridLine.setAttribute('stroke-width', '0.05');
+    svg.appendChild(gridLine);
+  };
+  for (let i = minX; i <= maxX + 1; i++) addGridLine(i, minY, i, maxY + 1);
+  for (let i = minY; i <= maxY + 1; i++) addGridLine(minX, i, maxX + 1, i);
+
+  const svgData = new XMLSerializer().serializeToString(svg);
+  const blob = new Blob([svgData], { type: 'image/svg+xml' });
+  downloadBlob(blob, fileName);
+};
+
+const downloadPNG = (): void => {
+  const { cellsPositive, width, height, fileName } = getSvgData();
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+
+  if (ctx === null) {
+    console.error('Could not create canvas context');
+    return;
+  }
+
+  ctx.fillStyle = 'black';
+  ctx.canvas.width = width;
+  ctx.canvas.height = height;
+
+  for (const cell of cellsPositive) {
+    ctx.fillRect(cell.x, cell.y, 1, 1);
+  }
+
+  canvas.toBlob((blob) => {
+    if (!blob) {
+      console.error('Could not generate blob from canvas');
+      return;
+    }
+
+    downloadBlob(blob, fileName);
+  }, 'image/png');
+};
+
+const downloadPBM = (): void => {
+  const { cellsPositive, width, height, fileName } = getSvgData();
+  const cellSet = new Set(cellsPositive.map((cell) => `${cell.x},${cell.y}`));
+
+  let pbmData = `P1\n${width} ${height}\n`;
+
+  for (let y = 0; y < height; y++) {
+    let row = '';
+    for (let x = 0; x < width; x++) {
+      row += cellSet.has(`${x},${y}`) ? '1 ' : '0 ';
+    }
+    pbmData += row.trim() + '\n';
+  }
+
+  const blob = new Blob([pbmData], { type: 'image/x-portable-bitmap' });
+  downloadBlob(blob, `${fileName}.pbm`);
+};
+
+export { downloadSVG, downloadPNG, downloadPBM };
+
+
+================================================
+FILE: src/geometry/Rectangle.tsx
+================================================
+import { createSignal, For, JSX, Show } from 'solid-js';
+import type { Shape } from '../types.d.ts';
+import Slider from '../ui-components/Slider.tsx';
+import Switch from '../ui-components/Switch.tsx';
+import CellLine from './helpers/CellLine.tsx';
+
+const [width, setWidth] = createSignal(15);
+const [height, setHeight] = createSignal(25);
+const [rotation, setRotation] = createSignal(30);
+const [showDrawGuide, setShowDrawGuide] = createSignal(false);
+
+const ShapeComponent = (): JSX.Element => {
+  const a = () => width() / 2;
+  const b = () => height() / 2;
+  //const radius = Math.hypot(a(), b());
+  const rotationRadians = () => (rotation() * Math.PI) / 180;
+
+  const rotate = (x: number, y: number): { x: number; y: number } => {
+    const cos = Math.cos(rotationRadians());
+    const sin = Math.sin(rotationRadians());
+    return {
+      x: x * cos - y * sin,
+      y: x * sin + y * cos,
+    };
+  };
+
+  const corners = [
+    rotate(-a(), -b()),
+    rotate(a(), -b()),
+    rotate(a(), b()),
+    rotate(-a(), b()),
+  ];
+
+  return (
+    <>
+      <For each={corners}>
+        {(corner, i) => {
+          const nextCorner = corners[(i() + 1) % corners.length];
+          return (
+            <CellLine
+              x1={corner.x}
+              y1={corner.y}
+              x2={nextCorner.x}
+              y2={nextCorner.y}
+            />
+          );
+        }}
+      </For>
+      <Show when={showDrawGuide()}>
+        <polygon
+          points={corners.map(({ x, y }) => `${x + 0.5},${y + 0.5}`).join(' ')}
+          class="draw-guide"
+        />
+      </Show>
+    </>
+  );
+};
+
+const SettingsComponent = (): JSX.Element => {
+  return (
+    <>
+      <Slider
+        label="Width"
+        min={4}
+        max={500}
+        currentVal={width}
+        updateVal={setWidth}
+      />
+      <Slider
+        label="Height"
+        min={4}
+        max={500}
+        currentVal={height}
+        updateVal={setHeight}
+      />
+      <Slider
+        label="Rotation"
+        min={0}
+        max={360}
+        currentVal={rotation}
+        updateVal={setRotation}
+      />
+      <Switch
+        label="Show Draw Guide"
+        currentVal={showDrawGuide}
+        updateVal={setShowDrawGuide}
+      />
+    </>
+  );
+};
+
+const Rectangle: Shape = {
+  shapeComponent: ShapeComponent,
+  settingsComponent: SettingsComponent,
+  name: 'Rectangle',
+};
+
+export default Rectangle;
+
+
+================================================
+FILE: src/geometry/ReuleauxPolygon.tsx
+================================================
+import { createSignal, createMemo, For, Show, JSX } from 'solid-js';
+import type { Shape } from '../types.d.ts';
+import CellArc from './helpers/CellArc.tsx';
+import Slider from '../ui-components/Slider.tsx';
+import Switch from '../ui-components/Switch.tsx';
+
+type Arc = {
+  x: number;
+  y: number;
+  radius: number;
+  startAngle: number;
+  endAngle: number;
+};
+
+const [sides, setSides] = createSignal(3);
+const [diameter, setDiameter] = createSignal(30);
+const [rotation, setRotation] = createSignal(0);
+const [showDrawGuide, setShowDrawGuide] = createSignal(false);
+
+const ShapeComponent = () => {
+  const theta = createMemo(() => (2 * Math.PI) / sides());
+  const radius = createMemo(() => diameter() / 2);
+  const arcRadius = createMemo(() =>
+    Math.sqrt(
+      2 * radius() ** 2 * (1 - Math.cos(theta() * Math.floor(sides() / 2)))
+    )
+  );
+  const rotationRadians = createMemo(() => (rotation() * Math.PI) / 180);
+
+  const arcs = () =>
+    Array.from({ length: sides() }).map((_, i) => {
+      const angle = i * theta() + rotationRadians();
+      const cx = radius() * Math.cos(angle);
+      const cy = radius() * Math.sin(angle);
+      const baseAngle = theta() * i + Math.PI + rotationRadians();
+      return {
+        x: cx,
+        y: cy,
+        radius: arcRadius(),
+        startAngle: baseAngle - theta() / 4,
+        endAngle: baseAngle + theta() / 4,
+      };
+    });
+
+  return (
+    <>
+      <For each={arcs()}>
+        {(arc) => (
+          <CellArc
+            x={arc.x}
+            y={arc.y}
+            radius={arc.radius}
+            startAngle={arc.startAngle}
+            endAngle={arc.endAngle}
+          />
+        )}
+      </For>
+      <Show when={showDrawGuide()}>
+        <path d={getReuleauxPath(arcs())} class="draw-guide" />
+      </Show>
+    </>
+  );
+};
+
+function getReuleauxPath(arcs: Arc[]): string {
+  const getArcEnd = (arc: Arc) => {
+    return {
+      x: arc.x + arc.radius * Math.cos(arc.endAngle) + 0.5,
+      y: arc.y + arc.radius * Math.sin(arc.endAngle) + 0.5,
+    };
+  };
+
+  const start = getArcEnd(arcs[arcs.length - 1]);
+  let path = `M ${start.x} ${start.y}`;
+  arcs.forEach((arc) => {
+    const end = getArcEnd(arc);
+    path += ` A ${arc.radius} ${arc.radius} 0 0 1 ${end.x} ${end.y}`;
+  });
+  path += ' Z';
+  return path;
+}
+
+const SettingsComponent = (): JSX.Element => {
+  return (
+    <>
+      <Slider
+        label="Sides"
+        min={3}
+        max={11}
+        step={2}
+        currentVal={sides}
+        updateVal={setSides}
+      />
+      <Slider
+        label="Diameter"
+        min={10}
+        max={500}
+        currentVal={diameter}
+        updateVal={setDiameter}
+      />
+      <Slider
+        label="Rotation"
+        min={0}
+        max={360}
+        currentVal={rotation}
+        updateVal={setRotation}
+      />
+      <Switch
+        label="Show Draw Guide"
+        currentVal={showDrawGuide}
+        updateVal={setShowDrawGuide}
+      />
+    </>
+  );
+};
+
+const ReuleauxPolygon: Shape = {
+  shapeComponent: ShapeComponent,
+  settingsComponent: SettingsComponent,
+  name: 'Reuleaux Polygon',
+};
+
+export default ReuleauxPolygon;
+
+
+================================================
+FILE: src/geometry/Spirangle.tsx
+================================================
+import { createSignal, For, Show, JSX } from 'solid-js';
+import type { Shape } from '../types.d.ts';
+import CellLine from './helpers/CellLine.tsx';
+import Slider from '../ui-components/Slider.tsx';
+import Switch from '../ui-components/Switch.tsx';
+
+const [sides, setSides] = createSignal(4);
+const [diameter, setDiameter] = createSignal(50);
+const [loops, setLoops] = createSignal(4);
+const [rotation, setRotation] = createSignal(30);
+const [invert, setInvert] = createSignal(false);
+const [showDrawGuide, setShowDrawGuide] = createSignal(false);
+
+const ShapeComponent = (): JSX.Element => {
+  let k = 0;
+  const radius = diameter() / 2;
+  const radiusStep = radius / sides() / loops();
+  let verts: { x: number; y: number }[] = [];
+  for (let i = 0; i < loops(); i++) {
+    for (let j = 0; j < sides(); j++) {
+      const angle = (j * 2 * Math.PI) / sides() + (rotation() * Math.PI) / 180;
+      verts.push({
+        x: (invert() ? -1 : 1) * radiusStep * k * Math.cos(angle),
+        y: radiusStep * k * Math.sin(angle),
+      });
+      k++;
+    }
+  }
+
+  return (
+    <>
+      <For each={Array.from({ length: verts.length - 1 })}>
+        {(_, i) => (
+          <CellLine
+            x1={verts[i()].x}
+            y1={verts[i()].y}
+            x2={verts[i() + 1].x}
+            y2={verts[i() + 1].y}
+          />
+        )}
+      </For>
+      <Show when={showDrawGuide()}>
+        <polyline
+          points={verts.map(({ x, y }) => `${x + 0.5},${y + 0.5}`).join(' ')}
+          class="draw-guide"
+        />
+      </Show>
+    </>
+  );
+};
+
+const SettingsComponent = (): JSX.Element => {
+  return (
+    <>
+      <Slider
+        label="Sides"
+        min={3}
+        max={10}
+        currentVal={sides}
+        updateVal={setSides}
+      />
+      <Slider
+        label="Diameter"
+        min={10}
+        max={500}
+        currentVal={diameter}
+        updateVal={setDiameter}
+      />
+      <Slider
+        label="Loops"
+        min={2}
+        max={10}
+        currentVal={loops}
+        updateVal={setLoops}
+      />
+      <Slider
+        label="Rotation"
+        min={0}
+        max={360}
+        currentVal={rotation}
+        updateVal={setRotation}
+      />
+      <Switch label="Invert" currentVal={invert} updateVal={setInvert} />
+      <Switch
+        label="Show Draw Guide"
+        currentVal={showDrawGuide}
+        updateVal={setShowDrawGuide}
+      />
+    </>
+  );
+};
+
+const Spirangle: Shape = {
+  shapeComponent: ShapeComponent,
+  settingsComponent: SettingsComponent,
+  name: 'Spirangle',
+};
+
+export default Spirangle;
+
+
+================================================
+FILE: src/geometry/Star.tsx
+================================================
+import { createSignal, For, Show, JSX } from 'solid-js';
+import type { Shape } from '../types.d.ts';
+import CellLine from './helpers/CellLine.tsx';
+import CellCircle from './helpers/CellCircle.tsx';
+import Slider from '../ui-components/Slider.tsx';
+import Switch from '../ui-components/Switch.tsx';
+
+const [vertices, setVertices] = createSignal(5);
+const [diameter1, setDiameter1] = createSignal(20);
+const [diameter2, setDiameter2] = createSignal(40);
+const [rotation, setRotation] = createSignal(72);
+const [showBounds, setShowBounds] = createSignal(false);
+const [showDrawGuide, setShowDrawGuide] = createSignal(false);
+
+const calculateVertex = (i: number): { x: number; y: number } => {
+  const d = i % 2 == 0 ? diameter1() : diameter2();
+  const radius = (d - 1) / 2;
+  const angle =
+    (i * 2 * Math.PI) / vertices() / 2 + (rotation() * Math.PI) / 180;
+  return {
+    x: radius * Math.cos(angle),
+    y: radius * Math.sin(angle),
+  };
+};
+
+const ShapeComponent = (): JSX.Element => {
+  const verts = Array.from({ length: vertices() * 2 }, (_, i) =>
+    calculateVertex(i)
+  );
+  return (
+    <>
+      <Show when={showBounds()}>
+        <CellCircle x={0} y={0} diameter={diameter1()} debug />
+        <CellCircle x={0} y={0} diameter={diameter2()} debug />
+      </Show>
+      <For each={verts}>
+        {(_, i) => (
+          <CellLine
+            x1={verts[i()].x}
+            y1={verts[i()].y}
+            x2={verts[(i() + 1) % (vertices() * 2)].x}
+            y2={verts[(i() + 1) % (vertices() * 2)].y}
+          />
+        )}
+      </For>
+      <Show when={showDrawGuide()}>
+        <polygon
+          points={verts.map(({ x, y }) => `${x + 0.5},${y + 0.5}`).join(' ')}
+          class="draw-guide"
+        />
+      </Show>
+    </>
+  );
+};
+
+const SettingsComponent = (): JSX.Element => {
+  return (
+    <>
+      <Slider
+        label="Vertices"
+        min={3}
+        max={16}
+        currentVal={vertices}
+        updateVal={setVertices}
+      />
+      <Slider
+        label="Diameter 1"
+        min={0}
+        max={500}
+        currentVal={diameter1}
+        updateVal={setDiameter1}
+      />
+      <Slider
+        label="Diameter 2"
+        min={0}
+        max={500}
+        currentVal={diameter2}
+        updateVal={setDiameter2}
+      />
+      <Slider
+        label="Rotation"
+        min={0}
+        max={360}
+        currentVal={rotation}
+        updateVal={setRotation}
+      />
+      <Switch
+        label="Show Bounds"
+        currentVal={showBounds}
+        updateVal={setShowBounds}
+      />
+      <Switch
+        label="Show Draw Guide"
+        currentVal={showDrawGuide}
+        updateVal={setShowDrawGuide}
+      />
+    </>
+  );
+};
+
+const Star: Shape = {
+  shapeComponent: ShapeComponent,
+  settingsComponent: SettingsComponent,
+  name: 'Star',
+};
+
+export default Star;
+
+
+================================================
+FILE: src/geometry/Superellipse.tsx
+================================================
+import { createSignal, For, Show, JSX } from 'solid-js';
+import type { Shape } from '../types.d.ts';
+import Slider from '../ui-components/Slider.tsx';
+import Switch from '../ui-components/Switch.tsx';
+import CellLine from './helpers/CellLine.tsx';
+import Cell from './helpers/Cell.tsx';
+
+const [width, setWidth] = createSignal(31);
+const [height, setHeight] = createSignal(31);
+const [exponent, setExponent] = createSignal(4);
+const [showBounds, setShowBounds] = createSignal(false);
+const [showCenter, setShowCenter] = createSignal(false);
+
+const ShapeComponent = (): JSX.Element => {
+  const n = exponent();
+  const a = width() / 2;
+  const b = height() / 2;
+
+  let cx = width() % 2 === 0 ? 0.5 : 0;
+  let cy = height() % 2 === 0 ? 0.5 : 0;
+
+  const left = Math.trunc(cx - a);
+  const right = Math.trunc(cx + a);
+  const top = Math.trunc(cy - b);
+  const bottom = Math.trunc(cy + b);
+
+  let points = [];
+
+  for (let x = cx + 1; x < right; x++) {
+    let y = Math.round(b * (1 - (Math.abs(x) / a) ** n) ** (1 / n)) - cy;
+    y = Math.max(cy, Math.min(y, bottom));
+    points.push({ x, y });
+  }
+  points.push({ x: cx, y: bottom - cy });
+
+  for (let y = cy + 1; y < bottom; y++) {
+    let x = Math.round(a * (1 - (Math.abs(y) / b) ** n) ** (1 / n)) - cx;
+    x = Math.max(cx, Math.min(x, right));
+    points.push({ x, y });
+  }
+  points.push({ x: right - cx, y: cy });
+
+  //if (showCenter()) points.push({ x: cx, y: cy });
+
+  return (
+    <>
+      <Show when={showBounds()}>
+        <CellLine x1={left} y1={top} x2={right} y2={top} debug />
+        <CellLine x1={right} y1={top} x2={right} y2={bottom} debug />
+        <CellLine x1={right} y1={bottom} x2={left} y2={bottom} debug />
+        <CellLine x1={left} y1={bottom} x2={left} y2={top} debug />
+      </Show>
+      <Show when={showCenter()}>
+        <Show when={height() % 2 === 0}>
+          <CellLine x1={left} y1={1} x2={right} y2={1} debug />
+        </Show>
+        <Show when={width() % 2 === 0}>
+          <CellLine x1={1} y1={top} x2={1} y2={bottom} debug />
+        </Show>
+        <CellLine x1={0} y1={top} x2={0} y2={bottom} debug />
+        <CellLine x1={left} y1={0} x2={right} y2={0} debug />
+      </Show>
+      <For each={points}>
+        {(p) => (
+          <>
+            <Cell x={cx + p.x} y={cy + p.y} />
+            <Cell x={cx - p.x} y={cy + p.y} />
+            <Cell x={cx + p.x} y={cy - p.y} />
+            <Cell x={cx - p.x} y={cy - p.y} />
+          </>
+        )}
+      </For>
+    </>
+  );
+};
+
+const SettingsComponent = (): JSX.Element => {
+  return (
+    <>
+      <Slider
+        label="Width"
+        min={4}
+        max={500}
+        currentVal={width}
+        updateVal={setWidth}
+      />
+      <Slider
+        label="Height"
+        min={4}
+        max={500}
+        currentVal={height}
+        updateVal={setHeight}
+      />
+      <Slider
+        label="Exponent"
+        min={0.1}
+        max={10}
+        step={0.01}
+        currentVal={exponent}
+        updateVal={setExponent}
+      />
+      <Switch
+        label="Show Bounds"
+        currentVal={showBounds}
+        updateVal={setShowBounds}
+      />
+      <Switch
+        label="Show Center"
+        currentVal={showCenter}
+        updateVal={setShowCenter}
+      />
+    </>
+  );
+};
+
+const Superellipse: Shape = {
+  shapeComponent: ShapeComponent,
+  settingsComponent: SettingsComponent,
+  name: 'Superellipse',
+};
+
+export default Superellipse;
+
+
+================================================
+FILE: src/geometry/helpers/Cell.tsx
+================================================
+import { createSignal, JSX } from 'solid-js';
+
+const Cell = (props: {
+  x: number;
+  y: number;
+  debug?: boolean;
+}): JSX.Element => {
+  const [isHighlighted, setIsHighlighted] = createSignal(false);
+  return (
+    <rect
+      onClick={() => setIsHighlighted(!isHighlighted())}
+      x={props.x}
+      y={props.y}
+      width="1"
+      height="1"
+      classList={{
+        cell: true,
+        debug: props.debug,
+        highlighted: isHighlighted(),
+      }}
+    />
+  );
+};
+
+export default Cell;
+
+
+================================================
+FILE: src/geometry/helpers/CellArc.tsx
+================================================
+import { For } from 'solid-js';
+import Cell from './Cell.tsx';
+
+const CellArc = (props: {
+  x: number;
+  y: number;
+  radius: number;
+  startAngle: number;
+  endAngle: number;
+  debug?: boolean;
+}) => {
+  let coords: { x: number; y: number }[] = [];
+
+  for (let i = props.startAngle; i < props.endAngle; i += 1 / props.radius) {
+    coords.push({
+      x: Math.round(props.x + props.radius * Math.cos(i)),
+      y: Math.round(props.y + props.radius * Math.sin(i)),
+    });
+  }
+  return (
+    <For each={coords}>
+      {(c) => <Cell x={c.x} y={c.y} debug={props.debug} />}
+    </For>
+  );
+};
+
+export default CellArc;
+
+
+================================================
+FILE: src/geometry/helpers/CellLine.tsx
+================================================
+import { For } from 'solid-js';
+import Cell from './Cell.tsx';
+
+const CellLine = (props: {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+  thickness?: number;
+  debug?: boolean;
+}) => {
+  const dx = props.x2 - props.x1;
+  const dy = props.y2 - props.y1;
+  const steps = Math.max(Math.abs(dx), Math.abs(dy));
+  const sx = dx / steps;
+  const sy = dy / steps;
+
+  const thickness = () => props.thickness ?? 1;
+
+  const points = () => {
+    const pts: { x: number; y: number }[] = [];
+    const t = thickness();
+    const half = (t - 1) / 2;
+
+    for (let i = 0; i <= steps; i++) {
+      const baseX = props.x1 + sx * i;
+      const baseY = props.y1 + sy * i;
+
+      for (let tx = -Math.floor(half); tx <= Math.ceil(half); tx++) {
+        for (let ty = -Math.floor(half); ty <= Math.ceil(half); ty++) {
+          pts.push({
+            x: Math.round(baseX + tx),
+            y: Math.round(baseY + ty),
+          });
+        }
+      }
+    }
+    return pts;
+  };
+
+  return (
+    <For each={points()}>
+      {(p) => (
+        <Cell
+          debug={props.debug}
+          x={p.x}
+          y={p.y}
+        />
+      )}
+    </For>
+  );
+};
+
+export default CellLine;
+
+
+================================================
+FILE: src/geometry/helpers/CellCircle.tsx
+================================================
+import { For } from 'solid-js';
+import Cell from './Cell.tsx';
+import { Point } from '../../types';
+
+const CellCircle = (props: {
+  x: number;
+  y: number;
+  diameter: number;
+  thickness?: number;
+  debug?: boolean;
+}) => {
+  const thickness = () => props.thickness ?? 1;
+
+  const points: Point[] = [];
+  const t = thickness();
+  const half = (t - 1) / 2;
+
+  for (let thick = -Math.floor(half); thick <= Math.ceil(half); thick++) {
+    let r = (props.diameter - 1) / 2 + thick;
+    r += 0.1 * (r > 2 ? -1 : 1);
+
+    const isEven = props.diameter % 2 === 0;
+    const offset = isEven ? 0.5 : 0;
+    const cx = props.x + offset;
+    const cy = props.y + offset;
+
+    for (let x = offset; x < r; x++) {
+      const py = r * r - x * x;
+      const y = Math.sqrt(py);
+
+      points.push({ x: Math.round(cx + x), y: Math.round(cy - y) });
+      points.push({ x: Math.round(cx + y), y: Math.round(cy - x) });
+      points.push({ x: Math.round(cx + x), y: Math.round(cy + y) });
+      points.push({ x: Math.round(cx + y), y: Math.round(cy + x) });
+      points.push({ x: Math.round(cx - x), y: Math.round(cy - y) });
+      points.push({ x: Math.round(cx - y), y: Math.round(cy - x) });
+      points.push({ x: Math.round(cx - x), y: Math.round(cy + y) });
+      points.push({ x: Math.round(cx - y), y: Math.round(cy + x) });
+    }
+  }
+
+  return (
+    <For each={points}>
+      {(c) => <Cell x={c.x} y={c.y} debug={props.debug} />}
+    </For>
+  );
+};
+
+export default CellCircle;
+
+
+================================================
+FILE: src/geometry/Heart.tsx
+================================================
+import { createSignal, For, JSX } from 'solid-js';
+import type { Shape } from '../types.d.ts';
+import CellLine from './helpers/CellLine.tsx';
+import Slider from '../ui-components/Slider.tsx';
+
+const [size, setSize] = createSignal(25);
+const [rotation, setRotation] = createSignal(0);
+
+const ShapeComponent = (): JSX.Element => {
+  const points = () => {
+    const pts: { x: number; y: number }[] = [];
+    const s = size() / 2;
+    const rad = (rotation() * Math.PI) / 180;
+    
+    // Heart curve parametric equation with rotation
+    for (let t = 0; t <= 2 * Math.PI; t += 0.05) {
+      const xRaw = 16 * Math.pow(Math.sin(t), 3);
+      const yRaw = -(
+        13 * Math.cos(t) -
+        5 * Math.cos(2 * t) -
+        2 * Math.cos(3 * t) -
+        Math.cos(4 * t)
+      );
+      const scale = s / 17;
+      const xScaled = xRaw * scale;
+      const yScaled = yRaw * scale;
+      
+      // Apply rotation
+      const x = xScaled * Math.cos(rad) - yScaled * Math.sin(rad);
+      const y = xScaled * Math.sin(rad) + yScaled * Math.cos(rad);
+      
+      pts.push({ x, y });
+    }
+    return pts;
+  };
+
+  return (
+    <For each={points()}>
+      {(p, i) => {
+        const next = points()[(i() + 1) % points().length];
+        return <CellLine x1={p.x} y1={p.y} x2={next.x} y2={next.y} />;
+      }}
+    </For>
+  );
+};
+
+const SettingsComponent = (): JSX.Element => {
+  return (
+    <>
+      <Slider
+        label="Size"
+        min={10}
+        max={500}
+        currentVal={size}
+        updateVal={setSize}
+      />
+      <Slider
+        label="Rotation"
+        min={0}
+        max={360}
+        currentVal={rotation}
+        updateVal={setRotation}
+      />
+    </>
+  );
+};
+
+const Heart: Shape = {
+  shapeComponent: ShapeComponent,
+  settingsComponent: SettingsComponent,
+  name: 'Heart',
+};
+
+export default Heart;
+
+
+================================================
+FILE: src/geometry/Gear.tsx
+================================================
+import { createSignal, For, JSX } from 'solid-js';
+import type { Shape } from '../types.d.ts';
+import CellLine from './helpers/CellLine.tsx';
+import Slider from '../ui-components/Slider.tsx';
+
+const [teeth, setTeeth] = createSignal(8);
+const [outerRadius, setOuterRadius] = createSignal(40);
+const [innerRadius, setInnerRadius] = createSignal(30);
+const [rotation, setRotation] = createSignal(0);
+
+const ShapeComponent = (): JSX.Element => {
+  const points = () => {
+    const pts: { x: number; y: number }[] = [];
+    const n = teeth() * 2;
+    const rad = (rotation() * Math.PI) / 180;
+    
+    for (let i = 0; i < n * 2; i++) {
+      const angle = (i * Math.PI) / n + rad;
+      const r = i % 4 < 2 ? outerRadius() : innerRadius();
+      pts.push({
+        x: r * Math.cos(angle),
+        y: r * Math.sin(angle),
+      });
+    }
+    return pts;
+  };
+
+  return (
+    <For each={points()}>
+      {(p, i) => {
+        const next = points()[(i() + 1) % points().length];
+        return <CellLine x1={p.x} y1={p.y} x2={next.x} y2={next.y} />;
+      }}
+    </For>
+  );
+};
+
+const SettingsComponent = (): JSX.Element => {
+  return (
+    <>
+      <Slider
+        label="Teeth"
+        min={3}
+        max={32}
+        currentVal={teeth}
+        updateVal={setTeeth}
+      />
+      <Slider
+        label="Outer Radius"
+        min={10}
+        max={250}
+        currentVal={outerRadius}
+        updateVal={setOuterRadius}
+      />
+      <Slider
+        label="Inner Radius"
+        min={5}
+        max={200}
+        currentVal={innerRadius}
+        updateVal={setInnerRadius}
+      />
+      <Slider
+        label="Rotation"
+        min={0}
+        max={360}
+        currentVal={rotation}
+        updateVal={setRotation}
+      />
+    </>
+  );
+};
+
+const Gear: Shape = {
+  shapeComponent: ShapeComponent,
+  settingsComponent: SettingsComponent,
+  name: 'Gear',
+};
+
+export default Gear;
+
+
+================================================
+FILE: src/geometry/Diamond.tsx
+================================================
+import { createSignal, For, JSX } from 'solid-js';
+import type { Shape } from '../types.d.ts';
+import CellLine from './helpers/CellLine.tsx';
+import Slider from '../ui-components/Slider.tsx';
+
+const [width, setWidth] = createSignal(40);
+const [height, setHeight] = createSignal(60);
+const [rotation, setRotation] = createSignal(0);
+
+const ShapeComponent = (): JSX.Element => {
+  const points = () => {
+    const pts = [
+      { x: 0, y: -height() / 2 },
+      { x: width() / 2, y: 0 },
+      { x: 0, y: height() / 2 },
+      { x: -width() / 2, y: 0 },
+    ];
+    const rad = (rotation() * Math.PI) / 180;
+    
+    return pts.map(p => ({
+      x: p.x * Math.cos(rad) - p.y * Math.sin(rad),
+      y: p.x * Math.sin(rad) + p.y * Math.cos(rad),
+    }));
+  };
+
+  return (
+    <For each={points()}>
+      {(p, i) => {
+        const next = points()[(i() + 1) % points().length];
+        return <CellLine x1={p.x} y1={p.y} x2={next.x} y2={next.y} />;
+      }}
+    </For>
+  );
+};
+
+const SettingsComponent = (): JSX.Element => {
+  return (
+    <>
+      <Slider
+        label="Width"
+        min={10}
+        max={500}
+        currentVal={width}
+        updateVal={setWidth}
+      />
+      <Slider
+        label="Height"
+        min={10}
+        max={500}
+        currentVal={height}
+        updateVal={setHeight}
+      />
+      <Slider
+        label="Rotation"
+        min={0}
+        max={360}
+        currentVal={rotation}
+        updateVal={setRotation}
+      />
+    </>
+  );
+};
+
+const Diamond: Shape = {
+  shapeComponent: ShapeComponent,
+  settingsComponent: SettingsComponent,
+  name: 'Diamond',
+};
+
+export default Diamond;
+
+
+================================================
+FILE: src/geometry/Capsule.tsx
+================================================
+import { createSignal, For, JSX } from 'solid-js';
+import type { Shape } from '../types.d.ts';
+import CellLine from './helpers/CellLine.tsx';
+import Slider from '../ui-components/Slider.tsx';
+
+const [width, setWidth] = createSignal(60);
+const [radius, setRadius] = createSignal(20);
+const [rotation, setRotation] = createSignal(0);
+
+const ShapeComponent = (): JSX.Element => {
+  const points = () => {
+    const pts: { x: number; y: number }[] = [];
+    const w = width() / 2;
+    const r = radius();
+    const rad = (rotation() * Math.PI) / 180;
+
+    // Top semi-circle
+    for (let t = Math.PI; t <= 2 * Math.PI; t += 0.2) {
+      pts.push({ x: w + r * Math.cos(t), y: r * Math.sin(t) });
+    }
+    // Bottom semi-circle
+    for (let t = 0; t <= Math.PI; t += 0.2) {
+      pts.push({ x: -w + r * Math.cos(t), y: r * Math.sin(t) });
+    }
+
+    return pts.map((p) => ({
+      x: p.x * Math.cos(rad) - p.y * Math.sin(rad),
+      y: p.x * Math.sin(rad) + p.y * Math.cos(rad),
+    }));
+  };
+
+  return (
+    <For each={points()}>
+      {(p, i) => {
+        const next = points()[(i() + 1) % points().length];
+        return <CellLine x1={p.x} y1={p.y} x2={next.x} y2={next.y} />;
+      }}
+    </For>
+  );
+};
+
+const SettingsComponent = (): JSX.Element => {
+  return (
+    <>
+      <Slider label="Width" min={10} max={400} currentVal={width} updateVal={setWidth} />
+      <Slider label="Radius" min={5} max={200} currentVal={radius} updateVal={setRadius} />
+      <Slider label="Rotation" min={0} max={360} currentVal={rotation} updateVal={setRotation} />
+    </>
+  );
+};
+
+const Capsule: Shape = {
+  shapeComponent: ShapeComponent,
+  settingsComponent: SettingsComponent,
+  name: 'Capsule',
+};
+
+export default Capsule;
+
+
+================================================
+FILE: src/geometry/Arrow.tsx
+================================================
+import { createSignal, For, JSX } from 'solid-js';
+import type { Shape } from '../types.d.ts';
+import CellLine from './helpers/CellLine.tsx';
+import Slider from '../ui-components/Slider.tsx';
+
+const [headSize, setHeadSize] = createSignal(30);
+const [shaftWidth, setShaftWidth] = createSignal(15);
+const [totalLength, setTotalLength] = createSignal(100);
+const [rotation, setRotation] = createSignal(0);
+
+const ShapeComponent = (): JSX.Element => {
+  const points = () => {
+    const hs = headSize();
+    const sw = shaftWidth() / 2;
+    const tl = totalLength() / 2;
+    const rad = (rotation() * Math.PI) / 180;
+
+    const pts = [
+      { x: -tl, y: -sw }, { x: tl - hs, y: -sw }, { x: tl - hs, y: -hs },
+      { x: tl, y: 0 }, { x: tl - hs, y: hs }, { x: tl - hs, y: sw },
+      { x: -tl, y: sw }
+    ];
+
+    return pts.map(p => ({
+      x: p.x * Math.cos(rad) - p.y * Math.sin(rad),
+      y: p.x * Math.sin(rad) + p.y * Math.cos(rad),
+    }));
+  };
+
+  return (
+    <For each={points()}>
+      {(p, i) => {
+        const next = points()[(i() + 1) % points().length];
+        return <CellLine x1={p.x} y1={p.y} x2={next.x} y2={next.y} />;
+      }}
+    </For>
+  );
+};
+
+const SettingsComponent = (): JSX.Element => (
+  <>
+    <Slider label="Total Length" min={20} max={400} currentVal={totalLength} updateVal={setTotalLength} />
+    <Slider label="Head Size" min={5} max={100} currentVal={headSize} updateVal={setHeadSize} />
+    <Slider label="Shaft Width" min={2} max={100} currentVal={shaftWidth} updateVal={setShaftWidth} />
+    <Slider label="Rotation" min={0} max={360} currentVal={rotation} updateVal={setRotation} />
+  </>
+);
+
+const Arrow: Shape = { shapeComponent: ShapeComponent, settingsComponent: SettingsComponent, name: 'Arrow' };
+export default Arrow;
+
+
+================================================
+FILE: src/geometry/Crescent.tsx
+================================================
+import { createSignal, For, JSX } from 'solid-js';
+import type { Shape } from '../types.d.ts';
+import CellLine from './helpers/CellLine.tsx';
+import Slider from '../ui-components/Slider.tsx';
+
+const [outerRadius, setOuterRadius] = createSignal(50);
+const [innerRadius, setInnerRadius] = createSignal(40);
+const [offset, setOffset] = createSignal(15);
+const [rotation, setRotation] = createSignal(0);
+
+const ShapeComponent = (): JSX.Element => {
+  const points = () => {
+    const pts: { x: number; y: number }[] = [];
+    const rad = (rotation() * Math.PI) / 180;
+    const or = outerRadius();
+    const ir = innerRadius();
+    const off = offset();
+
+    // Outer arc
+    for (let t = -Math.PI / 1.5; t <= Math.PI / 1.5; t += 0.1) {
+      pts.push({ x: or * Math.cos(t), y: or * Math.sin(t) });
+    }
+    // Inner arc
+    for (let t = Math.PI / 1.5; t >= -Math.PI / 1.5; t -= 0.1) {
+      pts.push({ x: ir * Math.cos(t) + off, y: ir * Math.sin(t) });
+    }
+
+    return pts.map(p => ({
+      x: p.x * Math.cos(rad) - p.y * Math.sin(rad),
+      y: p.x * Math.sin(rad) + p.y * Math.cos(rad),
+    }));
+  };
+
+  return (
+    <For each={points()}>
+      {(p, i) => {
+        const next = points()[(i() + 1) % points().length];
+        return <CellLine x1={p.x} y1={p.y} x2={next.x} y2={next.y} />;
+      }}
+    </For>
+  );
+};
+
+const SettingsComponent = (): JSX.Element => (
+  <>
+    <Slider label="Outer Radius" min={10} max={250} currentVal={outerRadius} updateVal={setOuterRadius} />
+    <Slider label="Inner Radius" min={10} max={250} currentVal={innerRadius} updateVal={setInnerRadius} />
+    <Slider label="Crescent Offset" min={0} max={100} currentVal={offset} updateVal={setOffset} />
+    <Slider label="Rotation" min={0} max={360} currentVal={rotation} updateVal={setRotation} />
+  </>
+);
+
+const Crescent: Shape = { shapeComponent: ShapeComponent, settingsComponent: SettingsComponent, name: 'Crescent' };
+export default Crescent;
+
+
+================================================
+FILE: src/geometry/Trapezoid.tsx
+================================================
+import { createSignal, For, JSX } from 'solid-js';
+import type { Shape } from '../types.d.ts';
+import CellLine from './helpers/CellLine.tsx';
+import Slider from '../ui-components/Slider.tsx';
+
+const [topWidth, setTopWidth] = createSignal(60);
+const [bottomWidth, setBottomWidth] = createSignal(100);
+const [height, setHeight] = createSignal(60);
+const [rotation, setRotation] = createSignal(0);
+
+const ShapeComponent = (): JSX.Element => {
+  const points = () => {
+    const tw = topWidth() / 2;
+    const bw = bottomWidth() / 2;
+    const h = height() / 2;
+    const rad = (rotation() * Math.PI) / 180;
+
+    const pts = [
+      { x: -tw, y: -h }, { x: tw, y: -h },
+      { x: bw, y: h }, { x: -bw, y: h }
+    ];
+
+    return pts.map(p => ({
+      x: p.x * Math.cos(rad) - p.y * Math.sin(rad),
+      y: p.x * Math.sin(rad) + p.y * Math.cos(rad),
+    }));
+  };
+
+  return (
+    <For each={points()}>
+      {(p, i) => {
+        const next = points()[(i() + 1) % points().length];
+        return <CellLine x1={p.x} y1={p.y} x2={next.x} y2={next.y} />;
+      }}
+    </For>
+  );
+};
+
+const SettingsComponent = (): JSX.Element => (
+  <>
+    <Slider label="Top Width" min={10} max={400} currentVal={topWidth} updateVal={setTopWidth} />
+    <Slider label="Bottom Width" min={10} max={400} currentVal={bottomWidth} updateVal={setBottomWidth} />
+    <Slider label="Height" min={10} max={400} currentVal={height} updateVal={setHeight} />
+    <Slider label="Rotation" min={0} max={360} currentVal={rotation} updateVal={setRotation} />
+  </>
+);
+
+const Trapezoid: Shape = { shapeComponent: ShapeComponent, settingsComponent: SettingsComponent, name: 'Trapezoid' };
+export default Trapezoid;
+
+
+================================================
+FILE: src/geometry/LShape.tsx
+================================================
+import { createSignal, For, JSX } from 'solid-js';
+import type { Shape } from '../types.d.ts';
+import CellLine from './helpers/CellLine.tsx';
+import Slider from '../ui-components/Slider.tsx';
+
+const [vLength, setVLength] = createSignal(80);
+const [hLength, setHLength] = createSignal(60);
+const [thickness, setThickness] = createSignal(20);
+const [rotation, setRotation] = createSignal(0);
+
+const ShapeComponent = (): JSX.Element => {
+  const points = () => {
+    const t = thickness();
+    const vl = vLength();
+    const hl = hLength();
+    const rad = (rotation() * Math.PI) / 180;
+
+    const pts = [
+      { x: 0, y: 0 }, { x: hl, y: 0 }, { x: hl, y: t },
+      { x: t, y: t }, { x: t, y: vl }, { x: 0, y: vl }
+    ].map(p => ({ x: p.x - t/2, y: p.y - vl/2 })); // Center it roughly
+
+    return pts.map(p => ({
+      x: p.x * Math.cos(rad) - p.y * Math.sin(rad),
+      y: p.x * Math.sin(rad) + p.y * Math.cos(rad),
+    }));
+  };
+
+  return (
+    <For each={points()}>
+      {(p, i) => {
+        const next = points()[(i() + 1) % points().length];
+        return <CellLine x1={p.x} y1={p.y} x2={next.x} y2={next.y} />;
+      }}
+    </For>
+  );
+};
+
+const SettingsComponent = (): JSX.Element => (
+  <>
+    <Slider label="Vertical Length" min={10} max={400} currentVal={vLength} updateVal={setVLength} />
+    <Slider label="Horizontal Length" min={10} max={400} currentVal={hLength} updateVal={setHLength} />
+    <Slider label="Thickness" min={5} max={100} currentVal={thickness} updateVal={setThickness} />
+    <Slider label="Rotation" min={0} max={360} currentVal={rotation} updateVal={setRotation} />
+  </>
+);
+
+const LShape: Shape = { shapeComponent: ShapeComponent, settingsComponent: SettingsComponent, name: 'L-Shape' };
+export default LShape;
+
+
+================================================
+FILE: src/geometry/Cross.tsx
+================================================
+import { createSignal, For, JSX } from 'solid-js';
+import type { Shape } from '../types.d.ts';
+import CellLine from './helpers/CellLine.tsx';
+import Slider from '../ui-components/Slider.tsx';
+
+const [thickness, setThickness] = createSignal(20);
+const [horizontalLength, setHorizontalLength] = createSignal(80);
+const [verticalLength, setVerticalLength] = createSignal(80);
+const [horizontalBarOffset, setHorizontalBarOffset] = createSignal(0);
+const [verticalBarOffset, setVerticalBarOffset] = createSignal(0);
+const [rotation, setRotation] = createSignal(0);
+
+const ShapeComponent = (): JSX.Element => {
+  const points = () => {
+    const t = thickness() / 2;
+    const hl = horizontalLength() / 2;
+    const vl = verticalLength() / 2;
+    const hOff = horizontalBarOffset();
+    const vOff = verticalBarOffset();
+
+    // The cross is made of 12 points. 
+    // We adjust the horizontal bar points with vOff (moves it up/down)
+    // and the vertical bar points with hOff (moves it left/right)
+    const pts = [
+      { x: -t + hOff, y: -vl }, { x: t + hOff, y: -vl }, { x: t + hOff, y: -t + vOff },
+      { x: hl, y: -t + vOff }, { x: hl, y: t + vOff }, { x: t + hOff, y: t + vOff },
+      { x: t + hOff, y: vl }, { x: -t + hOff, y: vl }, { x: -t + hOff, y: t + vOff },
+      { x: -hl, y: t + vOff }, { x: -hl, y: -t + vOff }, { x: -t + hOff, y: -t + vOff },
+    ];
+    const rad = (rotation() * Math.PI) / 180;
+
+    return pts.map((p) => ({
+      x: p.x * Math.cos(rad) - p.y * Math.sin(rad),
+      y: p.x * Math.sin(rad) + p.y * Math.cos(rad),
+    }));
+  };
+
+  return (
+    <For each={points()}>
+      {(p, i) => {
+        const next = points()[(i() + 1) % points().length];
+        return <CellLine x1={p.x} y1={p.y} x2={next.x} y2={next.y} />;
+      }}
+    </For>
+  );
+};
+
+const SettingsComponent = (): JSX.Element => {
+  return (
+    <>
+      <Slider label="Thickness" min={5} max={100} currentVal={thickness} updateVal={setThickness} />
+      <Slider label="Horiz. Length" min={10} max={400} currentVal={horizontalLength} updateVal={setHorizontalLength} />
+      <Slider label="Vert. Length" min={10} max={400} currentVal={verticalLength} updateVal={setVerticalLength} />
+      <Slider label="Horiz. Bar Offset" min={-200} max={200} currentVal={horizontalBarOffset} updateVal={setHorizontalBarOffset} />
+      <Slider label="Vert. Bar Offset" min={-200} max={200} currentVal={verticalBarOffset} updateVal={setVerticalBarOffset} />
+      <Slider label="Rotation" min={0} max={360} currentVal={rotation} updateVal={setRotation} />
+    </>
+  );
+};
+
+const Cross: Shape = {
+  shapeComponent: ShapeComponent,
+  settingsComponent: SettingsComponent,
+  name: 'Cross',
+};
+
+export default Cross;
+
+
+================================================
+FILE: src/geometry/Hexagram.tsx
+================================================
+import { createSignal, For, JSX } from 'solid-js';
+import type { Shape } from '../types.d.ts';
+import CellLine from './helpers/CellLine.tsx';
+import Slider from '../ui-components/Slider.tsx';
+
+const [outerRadius, setOuterRadius] = createSignal(50);
+const [innerRadius, setInnerRadius] = createSignal(25);
+const [pointsCount, setPointsCount] = createSignal(6);
+const [rotation, setRotation] = createSignal(0);
+const [thickness, setThickness] = createSignal(1);
+
+const ShapeComponent = (): JSX.Element => {
+  const points = () => {
+    const or = outerRadius();
+    const ir = innerRadius();
+    const rad = (rotation() * Math.PI) / 180;
+    const n = pointsCount();
+
+    const rotate = (p: { x: number; y: number }) => ({
+      x: p.x * Math.cos(rad) - p.y * Math.sin(rad),
+      y: p.x * Math.sin(rad) + p.y * Math.cos(rad),
+    });
+
+    const poly1: { x: number; y: number }[] = [];
+    const poly2: { x: number; y: number }[] = [];
+    
+    for (let i = 0; i < n; i++) {
+      const angle1 = (i * 2 * Math.PI) / n;
+      const angle2 = angle1 + Math.PI / n;
+      
+      poly1.push(rotate({ x: or * Math.cos(angle1), y: or * Math.sin(angle1) }));
+      poly2.push(rotate({ x: ir * Math.cos(angle2), y: ir * Math.sin(angle2) }));
+    }
+
+    return [poly1, poly2];
+  };
+
+  return (
+    <>
+      <For each={points()}>
+        {(poly) => (
+          <For each={poly}>
+            {(p, i) => {
+              const next = poly[(i() + 1) % poly.length];
+              return <CellLine x1={p.x} y1={p.y} x2={next.x} y2={next.y} thickness={thickness()} />;
+            }}
+          </For>
+        )}
+      </For>
+    </>
+  );
+};
+
+const SettingsComponent = (): JSX.Element => (
+  <>
+    <Slider label="Points" min={3} max={32} currentVal={pointsCount} updateVal={setPointsCount} />
+    <Slider label="Outer Radius" min={10} max={250} currentVal={outerRadius} updateVal={setOuterRadius} />
+    <Slider label="Inner Radius" min={10} max={250} currentVal={innerRadius} updateVal={setInnerRadius} />
+    <Slider label="Thickness" min={1} max={10} currentVal={thickness} updateVal={setThickness} />
+    <Slider label="Rotation" min={0} max={360} currentVal={rotation} updateVal={setRotation} />
+  </>
+);
+
+const Hexagram: Shape = { 
+  shapeComponent: ShapeComponent, 
+  settingsComponent: SettingsComponent, 
+  name: 'Hexagram' 
+};
+export default Hexagram;
+
+
+================================================
+FILE: src/geometry/RegularPolygon.tsx
+================================================
+import { createSignal, For, Show, JSX } from 'solid-js';
+import type { Shape } from '../types.d.ts';
+import CellLine from './helpers/CellLine.tsx';
+import Slider from '../ui-components/Slider.tsx';
+import Switch from '../ui-components/Switch.tsx';
+
+const [sides, setSides] = createSignal(5);
+const [diameter, setDiameter] = createSignal(25);
+const [rotation, setRotation] = createSignal(0);
+const [thickness, setThickness] = createSignal(1);
+const [showAngleBisectors, setShowAngleBisectors] = createSignal(false);
+const [showPerpendicularBisectors, setShowPerpendicularBisectors] =
+  createSignal(false);
+const [showDrawGuide, setShowDrawGuide] = createSignal(false);
+
+const calculateVertex = (i: number): { x: number; y: number } => {
+  const radius = diameter() / 2;
+  const angle = (i * 2 * Math.PI) / sides() + (rotation() * Math.PI) / 180;
+  return {
+    x: radius * Math.cos(angle),
+    y: radius * Math.sin(angle),
+  };
+};
+
+const ShapeComponent = (): JSX.Element => {
+  const verts = Array.from({ length: sides() }, (_, i) => calculateVertex(i));
+  return (
+    <>
+      <Show when={showAngleBisectors()}>
+        <For each={verts}>
+          {(v) => <CellLine x1={v.x} y1={v.y} x2={0} y2={0} debug />}
+        </For>
+      </Show>
+      <Show when={showPerpendicularBisectors()}>
+        <For each={verts}>
+          {(_, i) => (
+            <CellLine
+              x1={(verts[i()].x + verts[(i() + 1) % sides()].x) / 2}
+              y1={(verts[i()].y + verts[(i() + 1) % sides()].y) / 2}
+              x2={0}
+              y2={0}
+              debug
+            />
+          )}
+        </For>
+      </Show>
+      <For each={verts}>
+        {(_, i) => (
+          <CellLine
+            x1={verts[i()].x}
+            y1={verts[i()].y}
+            x2={verts[(i() + 1) % sides()].x}
+            y2={verts[(i() + 1) % sides()].y}
+            thickness={thickness()}
+          />
+        )}
+      </For>
+      <Show when={showDrawGuide()}>
+        <polygon
+          points={verts.map(({ x, y }) => `${x + 0.5},${y + 0.5}`).join(' ')}
+          class="draw-guide"
+        />
+      </Show>
+    </>
+  );
+};
+
+const SettingsComponent = (): JSX.Element => {
+  return (
+    <>
+      <Slider
+        label="Sides"
+        min={3}
+        max={100}
+        currentVal={sides}
+        updateVal={setSides}
+      />
+      <Slider
+        label="Diameter"
+        min={10}
+        max={500}
+        currentVal={diameter}
+        updateVal={setDiameter}
+      />
+      <Slider
+        label="Rotation"
+        min={0}
+        max={360}
+        currentVal={rotation}
+        updateVal={setRotation}
+      />
+      <Slider
+        label="Thickness"
+        min={1}
+        max={50}
+        currentVal={thickness}
+        updateVal={setThickness}
+      />
+      <Switch
+        label="Show Angle Bisectors"
+        currentVal={showAngleBisectors}
+        updateVal={setShowAngleBisectors}
+      />
+      <Switch
+        label="Show Perpendicular Bisectors"
+        currentVal={showPerpendicularBisectors}
+        updateVal={setShowPerpendicularBisectors}
+      />
+      <Switch
+        label="Show Draw Guide"
+        currentVal={showDrawGuide}
+        updateVal={setShowDrawGuide}
+      />
+    </>
+  );
+};
+
+const RegularPolygon: Shape = {
+  shapeComponent: ShapeComponent,
+  settingsComponent: SettingsComponent,
+  name: 'Regular Polygon',
+};
+
+export default RegularPolygon;
+
+
+================================================
+FILE: src/geometry/Circle.tsx
+================================================
+import { createSignal, JSX, Show } from 'solid-js';
+import type { Shape } from '../types.d.ts';
+import CellLine from './helpers/CellLine.tsx';
+import CellCircle from './helpers/CellCircle.tsx';
+import Slider from '../ui-components/Slider.tsx';
+import Switch from '../ui-components/Switch.tsx';
+
+const [diameter, setDiameter] = createSignal(25);
+const [thickness, setThickness] = createSignal(1);
+
+const [showGuide, setShowGuide] = createSignal(false);
+const [showBounds, setShowBounds] = createSignal(false);
+const [showCenter, setShowCenter] = createSignal(false);
+
+const ShapeComponent = (): JSX.Element => {
+  const d = diameter();
+  let r = (d - 1) / 2;
+  r += 0.1 * (r > 2 ? -1 : 1);
+
+  const isEven = d % 2 === 0;
+  const offset = isEven ? 0.5 : 0;
+
+  const left = offset - r;
+  const right = offset + r;
+  const top = offset - r;
+  const bottom = offset + r;
+
+  return (
+    <>
+      <Show when={showBounds()}>
+        <CellLine debug x1={left} y1={top} x2={right} y2={top} />
+        <CellLine debug x1={right} y1={top} x2={right} y2={bottom} />
+        <CellLine debug x1={right} y1={bottom} x2={left} y2={bottom} />
+        <CellLine debug x1={left} y1={bottom} x2={left} y2={top} />
+      </Show>
+      <Show when={showCenter()}>
+        <CellLine debug x1={0} y1={top} x2={0} y2={bottom} />
+        <CellLine debug x1={left} y1={0} x2={right} y2={0} />
+        <Show when={isEven}>
+          <CellLine debug x1={left} y1={1} x2={right} y2={1} />
+          <CellLine debug x1={1} y1={top} x2={1} y2={bottom} />
+        </Show>
+      </Show>
+      <CellCircle x={0} y={0} diameter={d} thickness={thickness()} />
+      <Show when={showGuide()}>
+        <circle cx={offset + 0.5} cy={offset + 0.5} r={r} class="draw-guide" />
+      </Show>
+    </>
+  );
+};
+
+const SettingsComponent = (): JSX.Element => {
+  return (
+    <>
+      <Slider
+        label="Diameter"
+        min={1}
+        max={500}
+        currentVal={diameter}
+        updateVal={setDiameter}
+      />
+      <Slider
+        label="Thickness"
+        min={1}
+        max={50}
+        currentVal={thickness}
+        updateVal={setThickness}
+      />
+      <Switch
+        label="Show Bounds"
+        currentVal={showBounds}
+        updateVal={setShowBounds}
+      />
+      <Switch
+        label="Show Center"
+        currentVal={showCenter}
+        updateVal={setShowCenter}
+      />
+      <Switch
+        label="Show Draw Guide"
+        currentVal={showGuide}
+        updateVal={setShowGuide}
+      />
+    </>
+  );
+};
+
+const Circle: Shape = {
+  shapeComponent: ShapeComponent,
+  settingsComponent: SettingsComponent,
+  name: 'Circle',
+};
+
+export default Circle;
+
+
+================================================
+FILE: src/geometry/ArchimedianSpiral.tsx
+================================================
+import { createSignal, For, JSX } from 'solid-js';
+import type { Shape } from '../types.d.ts';
+import Slider from '../ui-components/Slider.tsx';
+import Switch from '../ui-components/Switch.tsx';
+import Cell from './helpers/Cell.tsx';
+
+const [loops, setLoops] = createSignal(3);
+const [diameter, setDiameter] = createSignal(25);
+const [rotation, setRotation] = createSignal(0);
+const [invert, setInvert] = createSignal(false);
+
+const ShapeComponent = (): JSX.Element => {
+  const a = diameter() / 4 / loops() / Math.PI;
+  const r = (rotation() * Math.PI) / 180;
+  let lastX = Infinity;
+  let lastY = Infinity;
+  let theta = loops() * 2 * Math.PI;
+  let coords: { x: number; y: number }[] = [];
+  while (theta > 0) {
+    const radius = a * theta;
+    const x = (invert() ? -1 : 1) * Math.round(radius * Math.cos(theta + r));
+    const y = Math.round(radius * Math.sin(theta + r));
+    theta -= 1 / radius;
+    if (x === lastX && y === lastY) continue;
+    coords.push({ x, y });
+    lastX = x;
+    lastY = y;
+  }
+  return <For each={coords}>{(c) => <Cell x={c.x} y={c.y} />}</For>;
+};
+
+const SettingsComponent = (): JSX.Element => {
+  return (
+    <>
+      <Slider
+        label="Loops"
+        min={0.5}
+        max={10}
+        step={0.1}
+        currentVal={loops}
+        updateVal={setLoops}
+      />
+      <Slider
+        label="Diameter"
+        min={4}
+        max={500}
+        currentVal={diameter}
+        updateVal={setDiameter}
+      />
+      <Slider
+        label="Rotation"
+        min={0}
+        max={360}
+        currentVal={rotation}
+        updateVal={setRotation}
+      />
+      <Switch label="Invert" currentVal={invert} updateVal={setInvert} />
+    </>
+  );
+};
+
+const ArchimedianSpiral: Shape = {
+  shapeComponent: ShapeComponent,
+  settingsComponent: SettingsComponent,
+  name: 'Archimedian Spiral',
+};
+
+export default ArchimedianSpiral;
+
+================================================
+FILE: src/geometry/Oval.tsx
+================================================
+import { createSignal, JSX, For } from 'solid-js';
+import type { Shape, Point } from '../types.d.ts';
+import Cell from './helpers/Cell.tsx';
+import Slider from '../ui-components/Slider.tsx';
+
+const [width, setWidth] = createSignal(50);
+const [height, setHeight] = createSignal(30);
+const [thickness, setThickness] = createSignal(1);
+
+const ShapeComponent = (): JSX.Element => {
+  const points = () => {
+    const w = width();
+    const h = height();
+    const th = thickness();
+    const pts: Point[] = [];
+    const halfTh = (th - 1) / 2;
+
+    for (let t = -Math.floor(halfTh); t <= Math.ceil(halfTh); t++) {
+      const a = (w / 2) + t;
+      const b = (h / 2) + t;
+      
+      // Basic ellipse rasterization (midpoint-ish)
+      for (let x = -a; x <= a; x++) {
+        const y = b * Math.sqrt(Math.max(0, 1 - (x * x) / (a * a)));
+        pts.push({ x: Math.round(x), y: Math.round(y) });
+        pts.push({ x: Math.round(x), y: Math.round(-y) });
+      }
+      for (let y = -b; y <= b; y++) {
+        const x = a * Math.sqrt(Math.max(0, 1 - (y * y) / (b * b)));
+        pts.push({ x: Math.round(x), y: Math.round(y) });
+        pts.push({ x: Math.round(-x), y: Math.round(y) });
+      }
+    }
+    return pts;
+  };
+
+  return (
+    <For each={points()}>
+      {(p) => <Cell x={p.x} y={p.y} />}
+    </For>
+  );
+};
+
+const SettingsComponent = (): JSX.Element => (
+  <>
+    <Slider label="Width" min={4} max={500} currentVal={width} updateVal={setWidth} />
+    <Slider label="Height" min={4} max={500} currentVal={height} updateVal={setHeight} />
+    <Slider label="Thickness" min={1} max={50} currentVal={thickness} updateVal={setThickness} />
+  </>
+);
+
+const Oval: Shape = {
+  shapeComponent: ShapeComponent,
+  settingsComponent: SettingsComponent,
+  name: 'Oval',
+};
+
+export default Oval;
+
+
+================================================
+FILE: src/geometry/Ring.tsx
+================================================
+import { createSignal, JSX } from 'solid-js';
+import type { Shape } from '../types.d.ts';
+import CellCircle from './helpers/CellCircle.tsx';
+import Slider from '../ui-components/Slider.tsx';
+
+const [outerDiameter, setOuterDiameter] = createSignal(40);
+const [innerDiameter, setInnerDiameter] = createSignal(20);
+const [thickness, setThickness] = createSignal(1);
+
+const ShapeComponent = (): JSX.Element => {
+  return (
+    <>
+      <CellCircle x={0} y={0} diameter={outerDiameter()} thickness={thickness()} />
+      <CellCircle x={0} y={0} diameter={innerDiameter()} thickness={thickness()} />
+    </>
+  );
+};
+
+const SettingsComponent = (): JSX.Element => (
+  <>
+    <Slider label="Outer Diameter" min={10} max={500} currentVal={outerDiameter} updateVal={setOuterDiameter} />
+    <Slider label="Inner Diameter" min={2} max={490} currentVal={innerDiameter} updateVal={setInnerDiameter} />
+    <Slider label="Thickness" min={1} max={50} currentVal={thickness} updateVal={setThickness} />
+  </>
+);
+
+const Ring: Shape = {
+  shapeComponent: ShapeComponent,
+  settingsComponent: SettingsComponent,
+  name: 'Ring',
+};
+
+export default Ring;
+
+
+================================================
+FILE: src/geometry/Triangle.tsx
+================================================
+import { createSignal, For, JSX } from 'solid-js';
+import type { Shape } from '../types.d.ts';
+import CellLine from './helpers/CellLine.tsx';
+import Slider from '../ui-components/Slider.tsx';
+
+const [base, setBase] = createSignal(40);
+const [height, setHeight] = createSignal(40);
+const [thickness, setThickness] = createSignal(1);
+
+const ShapeComponent = (): JSX.Element => {
+  const points = () => {
+    const b = base();
+    const h = height();
+    const v1 = { x: 0, y: -h / 2 };
+    const v2 = { x: -b / 2, y: h / 2 };
+    const v3 = { x: b / 2, y: h / 2 };
+
+    return [
+      { p1: v1, p2: v2 },
+      { p1: v2, p2: v3 },
+      { p1: v3, p2: v1 }
+    ];
+  };
+
+  return (
+    <>
+      <For each={points()}>
+        {(edge) => (
+          <CellLine 
+            x1={edge.p1.x} 
+            y1={edge.p1.y} 
+            x2={edge.p2.x} 
+            y2={edge.p2.y} 
+            thickness={thickness()} 
+          />
+        )}
+      </For>
+    </>
+  );
+};
+
+const SettingsComponent = (): JSX.Element => (
+  <>
+    <Slider label="Base" min={2} max={500} currentVal={base} updateVal={setBase} />
+    <Slider label="Height" min={2} max={500} currentVal={height} updateVal={setHeight} />
+    <Slider label="Thickness" min={1} max={50} currentVal={thickness} updateVal={setThickness} />
+  </>
+);
+
+const Triangle: Shape = {
+  shapeComponent: ShapeComponent,
+  settingsComponent: SettingsComponent,
+  name: 'Triangle',
+};
+
+export default Triangle;
+
+
+================================================
+FILE: src/index.tsx
+================================================
+/* @refresh reload */
+import { render } from 'solid-js/web';
+
+import App from './App';
+
+const root = document.getElementById('root');
+
+render(() => <App />, root!);
+
+
+================================================
+FILE: src/pointer.ts
+================================================
+import { createSignal } from 'solid-js';
+import { Position } from './types';
+import { camera, setCamera, changeZoom } from './camera';
+import { outputContainer } from './App';
+
+// mouse and touch event handlers for panning/zooming
+
+interface PointerState {
+  position: Position | null;
+  dragging: boolean;
+  dragStartPosition: Position | null;
+  pinchDelta: number | null;
+  cell: Position | null;
+}
+
+const [pointer, setPointer] = createSignal<PointerState>({
+  position: null,
+  dragging: false,
+  dragStartPosition: null,
+  pinchDelta: null,
+  cell: null,
+});
+
+const getPointerEventCoords = (event: MouseEvent | Touch): Position => {
+  if (outputContainer === undefined) return { x: 0, y: 0 };
+  const rect = outputContainer.getBoundingClientRect();
+  return {
+    x: event.clientX - rect.left,
+    y: event.clientY - rect.top,
+  };
+};
+
+const handleMouseMove = (event: MouseEvent): void => {
+  event.preventDefault();
+  setPointer({
+    ...pointer(),
+    position: getPointerEventCoords(event),
+  });
+  if (pointer().dragging) {
+    outputContainer?.style.setProperty('cursor', 'grabbing');
+    setCamera({
+      ...camera(),
+      position: {
+        x:
+          ((pointer().dragStartPosition!.x + camera().dragStartPosition!.x) *
+            camera().dragStartZoom!) /
+            camera().zoom -
+          pointer().position!.x,
+        y:
+          ((pointer().dragStartPosition!.y + camera().dragStartPosition!.y) *
+            camera().dragStartZoom!) /
+            camera().zoom -
+          pointer().position!.y,
+      },
+    });
+  }
+  setPointer({
+    ...pointer(),
+    cell: {
+      x: Math.floor(
+        (pointer().position!.x + camera().position.x) * camera().zoom
+      ),
+      y: -Math.floor(
+        (pointer().position!.y + camera().position.y) * camera().zoom
+      ),
+    },
+  });
+};
+
+const handleMouseDown = (event: MouseEvent): void => {
+  const coords = getPointerEventCoords(event);
+  setPointer({
+    ...pointer(),
+    position: coords,
+    dragStartPosition: coords,
+    dragging: true,
+  });
+  setCamera({
+    ...camera(),
+    dragStartPosition: camera().position,
+    dragStartZoom: camera().zoom,
+  });
+};
+
+const handleMouseUp = (): void => {
+  outputContainer?.style.setProperty('cursor', null);
+  setPointer({
+    ...pointer(),
+    dragStartPosition: null,
+    dragging: false,
+  });
+  setCamera({
+    ...camera(),
+    dragStartPosition: null,
+    dragStartZoom: null,
+  });
+};
+
+const handleMouseLeave = (): void => {
+  outputContainer?.style.setProperty('cursor', null);
+  setPointer({
+    ...pointer(),
+    position: null,
+    cell: null,
+    dragStartPosition: null,
+    dragging: false,
+  });
+  setCamera({
+    ...camera(),
+    dragStartPosition: null,
+    dragStartZoom: null,
+  });
+};
+
+const handleWheel = (event: WheelEvent): void => {
+  event.preventDefault();
+  const delta = 1 + 0.001 * event.deltaY;
+  changeZoom(delta, pointer().position?.x, pointer().position?.y);
+};
+
+const handleTouchStart = (event: TouchEvent): void => {
+  const { touches } = event;
+  let coords: Position;
+  let pinchDelta = null;
+  if (touches.length === 2) {
+    const t1 = getPointerEventCoords(touches[0]);
+    const t2 = getPointerEventCoords(touches[1]);
+    pinchDelta = Math.hypot(t2.x - t1.x, t2.y - t1.y);
+    coords = {
+      x: (t1.x + t2.x) / 2,
+      y: (t1.y + t2.y) / 2,
+    };
+  } else {
+    coords = getPointerEventCoords(touches[0]);
+  }
+  setPointer({
+    ...pointer(),
+    position: coords,
+    dragStartPosition: coords,
+    pinchDelta: pinchDelta,
+    dragging: true,
+  });
+  setCamera({
+    ...camera(),
+    dragStartPosition: camera().position,
+    dragStartZoom: camera().zoom,
+  });
+};
+
+const handleTouchMove = (event: TouchEvent): void => {
+  const { touches } = event;
+  let coords: Position;
+  let pinchDelta = null;
+  if (touches.length === 2) {
+    const t1 = getPointerEventCoords(touches[0]);
+    const t2 = getPointerEventCoords(touches[1]);
+    pinchDelta = Math.hypot(t2.x - t1.x, t2.y - t1.y);
+    coords = {
+      x: (t1.x + t2.x) / 2,
+      y: (t1.y + t2.y) / 2,
+    };
+    if (pointer().pinchDelta !== null) {
+      const factor = pointer().pinchDelta! / pinchDelta;
+      changeZoom(factor, coords.x, coords.y);
+    }
+  } else {
+    coords = getPointerEventCoords(touches[0]);
+  }
+  setPointer({
+    ...pointer(),
+    position: coords,
+    pinchDelta: pinchDelta,
+  });
+  setCamera({
+    ...camera(),
+    position: {
+      x:
+        ((pointer().dragStartPosition!.x + camera().dragStartPosition!.x) *
+          camera().dragStartZoom!) /
+          camera().zoom -
+        pointer().position!.x,
+      y:
+        ((pointer().dragStartPosition!.y + camera().dragStartPosition!.y) *
+          camera().dragStartZoom!) /
+          camera().zoom -
+        pointer().position!.y,
+    },
+  });
+};
+
+const handleTouchEnd = (event: TouchEvent): void => {
+  const { touches } = event;
+  if (touches.length === 0) {
+    setPointer({
+      ...pointer(),
+      position: null,
+      dragStartPosition: null,
+      dragging: false,
+      pinchDelta: null,
+    });
+    return;
+  }
+  let coords: Position;
+  if (touches.length === 2) {
+    const t1 = getPointerEventCoords(touches[0]);
+    const t2 = getPointerEventCoords(touches[1]);
+    coords = {
+      x: (t1.x + t2.x) / 2,
+      y: (t1.y + t2.y) / 2,
+    };
+  } else {
+    coords = getPointerEventCoords(touches[0]);
+  }
+  setPointer({
+    ...pointer(),
+    position: coords,
+    dragStartPosition: coords,
+    dragging: true,
+  });
+  setCamera({
+    ...camera(),
+    dragStartPosition: camera().position,
+    dragStartZoom: camera().zoom,
+  });
+};
+
+export {
+  pointer,
+  setPointer,
+  handleMouseMove,
+  handleMouseDown,
+  handleMouseUp,
+  handleMouseLeave,
+  handleWheel,
+  handleTouchStart,
+  handleTouchMove,
+  handleTouchEnd,
+};
+
+
+================================================
+FILE: src/types.d.ts
+================================================
+import type { Component } from 'solid-js';
+
+type Position = { x: number; y: number };
+
+type Point = { x: number; y: number };
+
+type Shape = {
+  name: string;
+  shapeComponent: Component;
+  settingsComponent: Component;
+};
+
+
+================================================
+FILE: src/ui-components/Select.css
+================================================
+.select-container {
+  position: relative;
+  align-self: flex-start;
+  border: 1px solid var(--ui-border-color);
+  border-radius: var(--ui-border-radius);
+  background-color: var(--ui-background-color);
+}
+
+.select-container::after {
+  content: '';
+  position: absolute;
+  top: 40%;
+  right: 10px;
+  width: 0;
+  height: 0;
+  padding: 3px;
+  border: solid var(--text-color);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+
+.select-container label {
+  position: absolute;
+  top: 6px;
+  padding: 0 10px;
+  font-size: 12px;
+  text-wrap: nowrap;
+  color: var(--text-color);
+  cursor: pointer;
+  pointer-events: none;
+}
+
+.select-container:hover {
+  background-color: var(--ui-hover-color);
+}
+
+select {
+  padding: 22px 34px 10px 10px;
+  box-sizing: content-box;
+  border: 0px;
+  border-radius: var(--ui-border-radius);
+  appearance: none;
+  font-size: 16px;
+  text-align: left;
+  color: var(--text-color);
+  background-color: transparent;
+  cursor: pointer;
+}
+
+option {
+  color: initial;
+}
+
+
+================================================
+FILE: src/ui-components/Select.tsx
+================================================
+import { For } from 'solid-js';
+import type { Accessor, Setter } from 'solid-js';
+import './Select.css';
+
+const Select = (props: {
+  label: string;
+  selectedOption: Accessor<any>;
+  updateSelectedOption: Setter<any>;
+  options: any[];
+  extractOptionValue: (option: any) => string;
+  extractOptionLabel: (option: any) => string;
+}) => {
+  const handleInput = (event: Event) => {
+    const selectedOptionVal = (event.currentTarget as HTMLSelectElement).value;
+    props.updateSelectedOption(
+      props.options.find(
+        (option) => props.extractOptionValue(option) === selectedOptionVal
+      )
+    );
+  };
+  const id = `${props.label.replace(/\s+/, '-')}-select`;
+  return (
+    <div class="select-container">
+      <label for={id}>{props.label}</label>
+      <select
+        id={id}
+        value={props.extractOptionValue(props.selectedOption())}
+        onChange={handleInput}
+      >
+        <For each={props.options}>
+          {(option) => (
+            <option value={props.extractOptionValue(option)}>
+              {props.extractOptionLabel(option)}
+            </option>
+          )}
+        </For>
+      </select>
+    </div>
+  );
+};
+
+export default Select;
+
+
+================================================
+FILE: src/ui-components/Slider.css
+================================================
+.slider-container {
+  display: flex;
+  flex-direction: column;
+  max-width: 360px;
+  padding: 8px 10px;
+  border: 1px solid var(--ui-border-color);
+  border-radius: var(--ui-border-radius);
+  background-color: var(--ui-background-color);
+}
+
+.slider-container > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  column-gap: 8px;
+  flex-wrap: wrap;
+}
+
+.slider-container > div > input[type='number'] {
+  appearance: textfield;
+  width: fit-content;
+  padding: 4px 8px;
+  border: 1px solid var(--ui-border-color);
+  border-radius: var(--ui-border-radius);
+  background-color: var(--ui-background-color);
+  color: var(--text-color);
+  font-size: 16px;
+  text-align: center;
+}
+
+.slider-container > div > input[type='number']:invalid {
+  border-color: #e74c3c;
+  background-color: rgba(231, 76, 60, 0.4);
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  display: none;
+}
+
+.slider {
+  width: 100%;
+  height: 6px;
+  margin: 8px 0;
+  border-radius: 16px;
+  appearance: none;
+  background-color: var(--ui-void-color);
+  cursor: pointer;
+}
+
+.slider::-webkit-slider-thumb {
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  appearance: none;
+  background-color: var(--cell-color);
+  box-shadow: none;
+}
+
+.slider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  appearance: none;
+  background-color: var(--cell-color);
+  box-shadow: none;
+}
+
+
+================================================
+FILE: src/ui-components/Slider.tsx
+================================================
+import type { JSX, Accessor, Setter } from 'solid-js';
+import './Slider.css';
+
+const Slider = ({
+  label,
+  min,
+  max,
+  step = 1,
+  currentVal,
+  updateVal,
+}: {
+  label: string;
+  min: number;
+  max: number;
+  step?: number;
+  currentVal: Accessor<number>;
+  updateVal: Setter<number>;
+}) => {
+  const handleInput: JSX.EventHandler<HTMLInputElement, InputEvent> = (
+    event
+  ) => {
+    const {
+      valueAsNumber,
+      validity: { valid },
+    } = event.currentTarget;
+    if (!valid) return;
+    updateVal(valueAsNumber);
+  };
+
+  const handleBlur: JSX.EventHandler<HTMLInputElement, FocusEvent> = (
+    event
+  ) => {
+    const { rangeOverflow, rangeUnderflow } = event.currentTarget.validity;
+    if (rangeUnderflow) updateVal(min);
+    if (rangeOverflow) updateVal(max);
+    event.currentTarget.value = String(currentVal());
+  };
+
+  const id = `${label.replace(/\s+/, '-')}`;
+  const percent = () => ((currentVal() - min) / (max - min)) * 100;
+  return (
+    <div class="slider-container">
+      <div>
+        <label for={`${id}-number`} id={`${id}-label`}>
+          {label}
+        </label>
+        <input
+          type="number"
+          id={`${id}-number`}
+          inputmode={step % 1 === 0 ? 'numeric' : 'decimal'}
+          step={step}
+          min={min}
+          max={max}
+          value={currentVal()}
+          onInput={handleInput}
+          onBlur={handleBlur}
+          aria-labelledby={`${id}-label`}
+          required
+        />
+      </div>
+      <div>
+        <input
+          style={{
+            background: `linear-gradient(to right, var(--cell-color) ${percent()}%, var(--ui-void-color) ${percent()}%)`,
+          }}
+          type="range"
+          id={`${id}-range`}
+          aria-labelledby={`${id}-label`}
+          class="slider"
+          min={min}
+          max={max}
+          step={step}
+          value={currentVal()}
+          onInput={handleInput}
+          tabIndex={-1}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default Slider;
+
+
+================================================
+FILE: src/ui-components/Switch.css
+================================================
+.switch {
+  width: 39px;
+  height: 26px;
+  margin: 0;
+  flex-shrink: 0;
+  border-radius: 72px;
+  appearance: none;
+  background-color: var(--ui-void-color);
+  position: relative;
+  cursor: pointer;
+}
+
+.switch::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  background-color: var(--ui-background-color);
+  border-radius: 50%;
+}
+
+.switch:hover::after {
+  background-color: var(--ui-hover-color);
+}
+
+.switch,
+.switch::after {
+  transition: all 100ms ease-in-out;
+}
+
+.switch:checked {
+  background-color: var(--cell-color);
+}
+
+.switch:checked::after {
+  left: 16px;
+  background-color: #fff;
+}
+
+.switch-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  max-width: 360px;
+  padding: 8px 10px;
+  border: 1px solid var(--ui-border-color);
+  border-radius: var(--ui-border-radius);
+  background-color: var(--ui-background-color);
+}
+
+
+================================================
+FILE: src/ui-components/Switch.tsx
+================================================
+import type { JSX, Accessor, Setter } from 'solid-js';
+import './Switch.css';
+
+const Switch = (props: {
+  label: string;
+  currentVal: Accessor<boolean>;
+  updateVal: Setter<boolean>;
+}) => {
+  const handleInput: JSX.EventHandler<HTMLInputElement, InputEvent> = (
+    event
+  ) => {
+    props.updateVal(event.currentTarget.checked);
+  };
+  const id = `${props.label.replace(/\s+/, '-')}-toggle`;
+  return (
+    <div class="switch-container">
+      <input
+        id={id}
+        class="switch"
+        type="checkbox"
+        checked={props.currentVal()}
+        value={Number(props.currentVal())}
+        onInput={handleInput}
+      />
+      <label for={id}>{props.label}</label>
+    </div>
+  );
+};
+
+export default Switch;
+
+
+================================================
+FILE: src/vite-env.d.ts
+================================================
+/// <reference types="vite/client" />
+
+
+================================================
+FILE: src/App.tsx
+================================================
+import {
+  createSignal,
+  createMemo,
+  onCleanup,
+  onMount,
+  For,
+  Show,
+} from 'solid-js';
+
+import type { Shape } from './types';
+
+import Rectangle from './geometry/Rectangle.tsx';
+import RegularPolygon from './geometry/RegularPolygon.tsx';
+import ReuleauxPolygon from './geometry/ReuleauxPolygon.tsx';
+import Superellipse from './geometry/Superellipse.tsx';
+import ArchimedianSpiral from './geometry/ArchimedianSpiral.tsx';
+import Star from './geometry/Star.tsx';
+import Spirangle from './geometry/Spirangle.tsx';
+import Circle from './geometry/Circle.tsx';
+import Heart from './geometry/Heart.tsx';
+import Gear from './geometry/Gear.tsx';
+import Diamond from './geometry/Diamond.tsx';
+import Capsule from './geometry/Capsule.tsx';
+import Cross from './geometry/Cross.tsx';
+import Arrow from './geometry/Arrow.tsx';
+import Crescent from './geometry/Crescent.tsx';
+import Trapezoid from './geometry/Trapezoid.tsx';
+import LShape from './geometry/LShape.tsx';
+import Hexagram from './geometry/Hexagram.tsx';
+import Triangle from './geometry/Triangle.tsx';
+import Oval from './geometry/Oval.tsx';
+import Ring from './geometry/Ring.tsx';
+
+import { downloadSVG, downloadPNG, downloadPBM } from './download.ts';
+import {
+  camera,
+  panCamera,
+  centerCamera,
+  changeZoom,
+  MIN_ZOOM,
+  MAX_ZOOM,
+  MIN_CELL_SIZE,
+} from './camera.ts';
+import {
+  pointer,
+  handleMouseDown,
+  handleMouseLeave,
+  handleMouseMove,
+  handleMouseUp,
+  handleTouchEnd,
+  handleTouchMove,
+  handleTouchStart,
+  handleWheel,
+} from './pointer.ts';
+import Select from './ui-components/Select.tsx';
+import Switch from './ui-components/Switch.tsx';
+import './App.css';
+
+function debounce<T extends (...args: any[]) => any>(
+  fn: T,
+  ms: number
+): (...args: Parameters<T>) => void {
+  let timeoutId: ReturnType<typeof setTimeout>;
+  return (...args: Parameters<T>) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => fn(...args), ms);
+  };
+}
+
+let outputContainer: HTMLDivElement | undefined;
+const [outputSize, setOutputSize] = createSignal({ width: 0, height: 0 });
+
+function App() {
+  const shapes: Shape[] = [
+    RegularPolygon,
+    ReuleauxPolygon,
+    Superellipse,
+    ArchimedianSpiral,
+    Star,
+    Spirangle,
+    Rectangle,
+    Circle,
+    Heart,
+    Gear,
+    Diamond,
+    Capsule,
+    Cross,
+    Arrow,
+    Crescent,
+    Trapezoid,
+    LShape,
+    Hexagram,
+    Triangle,
+    Oval,
+    Ring,
+  ];
+
+  const [cellCount, setCellCount] = createSignal(0);
+  const [isCountingCells, setIsCountingCells] = createSignal(false);
+  const [showGrid, setShowGrid] = createSignal(true);
+  const [symmetry, setSymmetry] = createSignal('none');
+  const [layers, setLayers] = createSignal([{ id: 0, shape: shapes[0] }]);
+  const [syncRotation, setSyncRotation] = createSignal(true);
+  const [globalRotation, setGlobalRotation] = createSignal(0);
+
+  // debounced cell counting on shape renders
+  onMount(() => {
+    const getNumberUniqueCells = (): number => {
+      const cells = document.getElementsByClassName('cell');
+      const uniqueCells = new Set<string>();
+      for (const cell of cells) {
+        const x = cell.getAttribute('x');
+        const y = cell.getAttribute('y');
+        uniqueCells.add(`${x},${y}`);
+      }
+      return uniqueCells.size;
+    };
+
+    const updateCellCount = debounce(() => {
+      setCellCount(getNumberUniqueCells());
+      setIsCountingCells(false);
+    }, 500);
+
+    const observer = new MutationObserver((mutations) => {
+      const includesCellNode = (nodes: NodeList): boolean => {
+        for (const node of nodes) {
+          if (node instanceof SVGRectElement) return true;
+        }
+        return false;
+      };
+
+      for (const mutation of mutations) {
+        if (
+          mutation.type === 'childList' &&
+          (includesCellNode(mutation.addedNodes) ||
+            includesCellNode(mutation.removedNodes))
+        ) {
+          setIsCountingCells(true);
+          updateCellCount();
+          break;
+        }
+      }
+    });
+
+    const cellsContainer = document.querySelector(
+      'svg[data-layer-name="cells"]'
+    );
+    if (cellsContainer) {
+      observer.observe(cellsContainer, {
+        childList: true,
+        subtree: false,
+        attributes: false,
+      });
+    }
+
+    setCellCount(getNumberUniqueCells());
+    onCleanup(() => observer.disconnect());
+  });
+
+  onMount(() => {
+    const mountStartTime = performance.now();
+    const updateOutputSize = (): void => {
+      if (!outputContainer) return;
+
+      // preserve camera center on resize
+      panCamera(
+        (outputSize().width - outputContainer.offsetWidth) / 2,
+        (outputSize().height - outputContainer.offsetHeight) / 2
+      );
+
+      setOutputSize({
+        width: outputContainer.offsetWidth,
+        height: outputContainer.offsetHeight,
+      });
+
+      const delta = performance.now() - mountStartTime;
+      if (delta < 500) centerCamera();
+    };
+    updateOutputSize();
+    const resizeObserver = new ResizeObserver(updateOutputSize);
+    resizeObserver.observe(outputContainer!);
+    onCleanup(() => {
+      resizeObserver.disconnect();
+    });
+  });
+
+  const scale = createMemo(
+    () => 2 ** Math.ceil(Math.log2(Math.max(camera().zoom * MIN_CELL_SIZE, 1)))
+  ); // number of cells per grid line
+  const numVerticalGridLines = () =>
+    Math.ceil((outputSize().width * camera().zoom) / scale()) + 1;
+  const numHorizontalGridLines = () =>
+    Math.ceil((outputSize().height * camera().zoom) / scale()) + 1;
+
+  onMount(() => {
+    const preventDefault = (event: TouchEvent): void => {
+      if (event.cancelable) event.preventDefault();
+    };
+    outputContainer!.addEventListener('touchmove', preventDefault);
+    onCleanup(() => {
+      outputContainer!.removeEventListener('touchmove', preventDefault);
+    });
+  });
+
+  return (
+    <>
+      <div
+        id="output-container"
+        ref={outputContainer}
+        onMouseMove={handleMouseMove}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseLeave}
+        onWheel={handleWheel}
+        onScroll={() => {}} // prevent scroll event propagation
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+          <svg
+            data-layer-name="cells"
+            width={outputSize().width}
+            height={outputSize().height}
+            viewBox={`${camera().position.x * camera().zoom} ${camera().position.y * camera().zoom} ${camera().zoom * outputSize().width} ${camera().zoom * outputSize().height}`}
+          >
+            <For each={layers()}>
+              {(layer) => (
+                <g transform={`rotate(${syncRotation() ? globalRotation() : 0})`}>
+                  <g>
+                    {layer.shape.shapeComponent({})}
+                  </g>
+                  <Show when={symmetry() !== 'none'}>
+                    <g transform={symmetry() === 'horizontal' || symmetry() === 'both' ? 'scale(1, -1)' : ''}>
+                      <Show when={symmetry() === 'horizontal' || symmetry() === 'both'}>
+                        {layer.shape.shapeComponent({})}
+                      </Show>
+                    </g>
+                    <g transform={symmetry() === 'vertical' || symmetry() === 'both' ? 'scale(-1, 1)' : ''}>
+                      <Show when={symmetry() === 'vertical' || symmetry() === 'both'}>
+                        {layer.shape.shapeComponent({})}
+                      </Show>
+                    </g>
+                    <g transform={symmetry() === 'both' ? 'scale(-1, -1)' : ''}>
+                      <Show when={symmetry() === 'both'}>
+                        {layer.shape.shapeComponent({})}
+                      </Show>
+                    </g>
+                    <Show when={symmetry() === 'radial-4'}>
+                      <g transform="rotate(90)">{layer.shape.shapeComponent({})}</g>
+                      <g transform="rotate(180)">{layer.shape.shapeComponent({})}</g>
+                      <g transform="rotate(270)">{layer.shape.shapeComponent({})}</g>
+                    </Show>
+                  </Show>
+                </g>
+              )}
+            </For>
+          </svg>
+        <svg
+          data-layer-name="grid"
+          width={outputSize().width}
+          height={outputSize().height}
+          style={{ display: showGrid() ? 'block' : 'none' }}
+          viewBox={`${camera().position.x % (outputSize().width / ((outputSize().width * camera().zoom) / scale()))} ${camera().position.y % (outputSize().height / ((outputSize().height * camera().zoom) / scale()))} ${outputSize().width} ${outputSize().height}`}
+        >
+          <For each={Array.from({ length: numVerticalGridLines() })}>
+            {(_, i) => (
+              <line
+                class="grid-line"
+                x1={(i() / camera().zoom) * scale()}
+                y1={-scale() / camera().zoom}
+                x2={(i() / camera().zoom) * scale()}
+                y2={outputSize().height + scale() / camera().zoom}
+              />
+            )}
+          </For>
+          <For each={Array.from({ length: numHorizontalGridLines() })}>
+            {(_, i) => (
+              <line
+                class="grid-line"
+                x1={-scale() / camera().zoom}
+                y1={(i() / camera().zoom) * scale()}
+                x2={outputSize().width + scale() / camera().zoom}
+                y2={(i() / camera().zoom) * scale()}
+              />
+            )}
+          </For>
+        </svg>
+        <div id="zoom-controls">
+          <button
+            aria-label="Zoom in"
+            disabled={camera().zoom === MAX_ZOOM}
+            onClick={() => changeZoom(0.8)}
+          >
+            +
+          </button>
+          <button
+            aria-label="Zoom out"
+            disabled={camera().zoom === MIN_ZOOM}
+            onClick={() => changeZoom(1.2)}
+          >
+            −
+          </button>
+        </div>
+        <Show when={pointer().cell !== null}>
+          <span id="pointer-coords">
+            ({pointer().cell!.x}, {pointer().cell!.y})
+          </span>
+        </Show>
+        <span id="cell-count" style={{ opacity: isCountingCells() ? 0.2 : 1 }}>
+          {cellCount()} cell{cellCount() === 1 ? '' : 's'}
+        </span>
+        <span id="scale" style={{ opacity: scale() > 1 ? 1 : 0 }}>
+          1∶{scale()}
+        </span>
+      </div>
+      <div id="settings-container" aria-label="Shape Settings">
+        <div style={{ display: 'flex', 'flex-direction': 'column', gap: '1rem', 'margin-bottom': '1rem', padding: '1rem', border: '1px solid #ccc', 'border-radius': '8px' }}>
+          <h3 style={{ margin: 0 }}>Global Settings</h3>
+          <Switch label="Show Grid" currentVal={showGrid} updateVal={setShowGrid} />
+          <Select
+            label="Symmetry"
+            selectedOption={symmetry}
+            updateSelectedOption={setSymmetry}
+            options={['none', 'horizontal', 'vertical', 'both', 'radial-4']}
+            extractOptionValue={(s) => s}
+            extractOptionLabel={(s) => s.charAt(0).toUpperCase() + s.slice(1)}
+          />
+          <Switch label="Sync Rotation" currentVal={syncRotation} updateVal={setSyncRotation} />
+          <Show when={syncRotation()}>
+            <div style={{ display: 'flex', 'flex-direction': 'column', gap: '0.5rem' }}>
+              <label>Global Rotation: {globalRotation()}°</label>
+              <input 
+                type="range" min="0" max="360" 
+                value={globalRotation()} 
+                onInput={(e) => setGlobalRotation(parseInt(e.currentTarget.value))} 
+              />
+            </div>
+          </Show>
+        </div>
+
+        <div style={{ display: 'flex', 'flex-direction': 'column', gap: '1rem', 'margin-bottom': '1rem' }}>
+          <div style={{ display: 'flex', 'justify-content': 'space-between', 'align-items': 'center' }}>
+            <h3 style={{ margin: 0 }}>Layers</h3>
+            <button onClick={() => setLayers([...layers(), { id: Date.now(), shape: shapes[0] }])}>+ Add Layer</button>
+          </div>
+          <For each={layers()}>
+            {(layer, index) => (
+              <div style={{ padding: '0.5rem', border: '1px solid #eee', 'border-radius': '4px' }}>
+                <div style={{ display: 'flex', 'justify-content': 'space-between', 'margin-bottom': '0.5rem' }}>
+                  <span>Layer {index() + 1}</span>
+                  <Show when={layers().length > 1}>
+                    <button style={{ color: 'red' }} onClick={() => setLayers(layers().filter(l => l.id !== layer.id))}>Remove</button>
+                  </Show>
+                </div>
+                  <Select
+                    label="Shape"
+                    selectedOption={() => layer.shape}
+                    updateSelectedOption={(newShape: Shape) => {
+                      const newLayers = [...layers()];
+                      newLayers[index()] = { ...layer, shape: newShape };
+                      setLayers(newLayers);
+                    }}
+                    options={shapes.sort((a, b) => a.name.localeCompare(b.name))}
+                    extractOptionValue={(shape: Shape) => shape.name}
+                    extractOptionLabel={(shape: Shape) => shape.name}
+                  />
+                  <div style={{ display: 'flex', 'flex-direction': 'column', gap: '0.5rem', 'margin-top': '0.5rem' }}>
+                    {layer.shape.settingsComponent({})}
+                  </div>
+              </div>
+            )}
+          </For>
+        </div>
+        <div class="button-group">
+          <span aria-hidden="true">Download</span>
+          <button onClick={downloadSVG} aria-label="Download as SVG">
+            SVG
+          </button>
+          <button onClick={downloadPNG} aria-label="Download as PNG">
+            PNG
+          </button>
+          <button onClick={downloadPBM} aria-label="Download as PBM">
+            PBM
+          </button>
+        </div>
+        <a
+          aria-label="View GitHub repository"
+          id="repo-link"
+          href="https://github.com/noquinn/pixel-shape-generator"
+          target="_blank"
+        >
+          Repository
+        </a>
+      </div>
+    </>
+  );
+}
+
+export { outputContainer, outputSize, setOutputSize };
+
+export default App;
