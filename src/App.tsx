@@ -54,6 +54,7 @@ import {
 } from './pointer.ts';
 import Select from './ui-components/Select.tsx';
 import Switch from './ui-components/Switch.tsx';
+import Slider from './ui-components/Slider.tsx';
 import './App.css';
 
 function debounce<T extends (...args: any[]) => any>(
