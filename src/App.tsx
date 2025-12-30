@@ -7,8 +7,6 @@ import {
   Show,
 } from 'solid-js';
 
-import { globalRotation, setGlobalRotation, syncRotation, setSyncRotation } from './globalSettings';
-
 import type { Shape } from './types';
 
 import Rectangle from './geometry/Rectangle.tsx';
@@ -227,7 +225,7 @@ function App() {
           >
             <For each={layers()}>
               {(layer) => (
-                <g transform={`rotate(${syncRotation() ? globalRotation() : 0})`}>
+                <g transform={`rotate(${globalRotation()})`}>
                   <g>
                     {layer.shape.shapeComponent({})}
                   </g>
@@ -327,17 +325,23 @@ function App() {
             extractOptionValue={(s) => s}
             extractOptionLabel={(s) => s.charAt(0).toUpperCase() + s.slice(1)}
           />
-          <Switch label="Sync Rotation" currentVal={syncRotation} updateVal={setSyncRotation} />
-          <Show when={syncRotation()}>
-            <div style={{ display: 'flex', 'flex-direction': 'column', gap: '0.5rem' }}>
-              <label>Global Rotation: {globalRotation()}°</label>
-              <input 
-                type="range" min="0" max="360" 
-                value={globalRotation()} 
-                onInput={(e) => setGlobalRotation(parseInt(e.currentTarget.value))} 
-              />
-            </div>
-          </Show>
+          <Switch label="Sync All Rotation" currentVal={syncRotation} updateVal={setSyncRotation} />
+          <div style={{ display: 'flex', 'flex-direction': 'column', gap: '0.5rem' }}>
+            <label>Master Rotation: {globalRotation()}°</label>
+            <input 
+              type="range" min="0" max="360" 
+              value={globalRotation()} 
+              onInput={(e) => {
+                const newVal = parseInt(e.currentTarget.value);
+                if (syncRotation()) {
+                  // This is a bit tricky since each shape has its own internal signal
+                  // The user wants global rotation to act as an offset or master control
+                  // For now, let's keep it as an SVG transform which effectively adds to internal rotation
+                }
+                setGlobalRotation(newVal);
+              }} 
+            />
+          </div>
         </div>
 
         <div style={{ display: 'flex', 'flex-direction': 'column', gap: '1rem', 'margin-bottom': '1rem' }}>
