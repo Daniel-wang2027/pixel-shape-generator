@@ -98,7 +98,9 @@ function App() {
   const [cellCount, setCellCount] = createSignal(0);
   const [isCountingCells, setIsCountingCells] = createSignal(false);
   const [showGrid, setShowGrid] = createSignal(true);
-  const [symmetry, setSymmetry] = createSignal('none');
+  const [horizontalSymmetry, setHorizontalSymmetry] = createSignal(false);
+  const [verticalSymmetry, setVerticalSymmetry] = createSignal(false);
+  const [radialSymmetryCount, setRadialSymmetryCount] = createSignal(1);
   const [layers, setLayers] = createSignal([{ id: 0, shape: shapes[0] }]);
   const [syncRotation, setSyncRotation] = createSignal(true);
   const [globalRotation, setGlobalRotation] = createSignal(0);
@@ -229,27 +231,29 @@ function App() {
                   <g>
                     {layer.shape.shapeComponent({})}
                   </g>
-                  <Show when={symmetry() !== 'none'}>
-                    <g transform={symmetry() === 'horizontal' || symmetry() === 'both' ? 'scale(1, -1)' : ''}>
-                      <Show when={symmetry() === 'horizontal' || symmetry() === 'both'}>
-                        {layer.shape.shapeComponent({})}
-                      </Show>
+                  <Show when={horizontalSymmetry()}>
+                    <g transform="scale(1, -1)">
+                      {layer.shape.shapeComponent({})}
                     </g>
-                    <g transform={symmetry() === 'vertical' || symmetry() === 'both' ? 'scale(-1, 1)' : ''}>
-                      <Show when={symmetry() === 'vertical' || symmetry() === 'both'}>
-                        {layer.shape.shapeComponent({})}
-                      </Show>
+                  </Show>
+                  <Show when={verticalSymmetry()}>
+                    <g transform="scale(-1, 1)">
+                      {layer.shape.shapeComponent({})}
                     </g>
-                    <g transform={symmetry() === 'both' ? 'scale(-1, -1)' : ''}>
-                      <Show when={symmetry() === 'both'}>
-                        {layer.shape.shapeComponent({})}
-                      </Show>
+                  </Show>
+                  <Show when={horizontalSymmetry() && verticalSymmetry()}>
+                    <g transform="scale(-1, -1)">
+                      {layer.shape.shapeComponent({})}
                     </g>
-                    <Show when={symmetry() === 'radial-4'}>
-                      <g transform="rotate(90)">{layer.shape.shapeComponent({})}</g>
-                      <g transform="rotate(180)">{layer.shape.shapeComponent({})}</g>
-                      <g transform="rotate(270)">{layer.shape.shapeComponent({})}</g>
-                    </Show>
+                  </Show>
+                  <Show when={radialSymmetryCount() > 1}>
+                    <For each={Array.from({ length: radialSymmetryCount() - 1 })}>
+                      {(_, i) => (
+                        <g transform={`rotate(${(i() + 1) * (360 / radialSymmetryCount())})`}>
+                          {layer.shape.shapeComponent({})}
+                        </g>
+                      )}
+                    </For>
                   </Show>
                 </g>
               )}
@@ -317,14 +321,19 @@ function App() {
         <div style={{ display: 'flex', 'flex-direction': 'column', gap: '1rem', 'margin-bottom': '1rem', padding: '1rem', border: '1px solid #ccc', 'border-radius': '8px' }}>
           <h3 style={{ margin: 0 }}>Global Settings</h3>
           <Switch label="Show Grid" currentVal={showGrid} updateVal={setShowGrid} />
-          <Select
-            label="Symmetry"
-            selectedOption={symmetry}
-            updateSelectedOption={setSymmetry}
-            options={['none', 'horizontal', 'vertical', 'both', 'radial-4']}
-            extractOptionValue={(s) => s}
-            extractOptionLabel={(s) => s.charAt(0).toUpperCase() + s.slice(1)}
-          />
+          <div style={{ display: 'flex', 'flex-direction': 'column', gap: '0.5rem' }}>
+            <label style={{ 'font-weight': 'bold' }}>Symmetry</label>
+            <Switch label="Horizontal" currentVal={horizontalSymmetry} updateVal={setHorizontalSymmetry} />
+            <Switch label="Vertical" currentVal={verticalSymmetry} updateVal={setVerticalSymmetry} />
+            <div style={{ display: 'flex', 'flex-direction': 'column', gap: '0.5rem', 'margin-top': '0.5rem' }}>
+              <label>Radial Count: {radialSymmetryCount()}</label>
+              <input 
+                type="range" min="1" max="32" 
+                value={radialSymmetryCount()} 
+                onInput={(e) => setRadialSymmetryCount(parseInt(e.currentTarget.value))} 
+              />
+            </div>
+          </div>
           <Switch label="Sync All Rotation" currentVal={syncRotation} updateVal={setSyncRotation} />
           <div style={{ display: 'flex', 'flex-direction': 'column', gap: '0.5rem' }}>
             <label>Master Rotation: {globalRotation()}°</label>
