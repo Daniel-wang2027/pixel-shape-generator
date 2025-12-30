@@ -101,7 +101,7 @@ function App() {
   const [horizontalSymmetry, setHorizontalSymmetry] = createSignal(false);
   const [verticalSymmetry, setVerticalSymmetry] = createSignal(false);
   const [radialSymmetryCount, setRadialSymmetryCount] = createSignal(1);
-  const [layers, setLayers] = createSignal([{ id: 0, shape: shapes[0] }]);
+  const [layers, setLayers] = createSignal([{ id: 0, shape: shapes[0], offset: { x: 0, y: 0 } }]);
   const [syncRotation, setSyncRotation] = createSignal(true);
   const [globalRotation, setGlobalRotation] = createSignal(0);
 
@@ -228,33 +228,35 @@ function App() {
             <For each={layers()}>
               {(layer) => (
                 <g transform={`rotate(${globalRotation()})`}>
-                  <g>
-                    {layer.shape.shapeComponent({})}
+                  <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
+                    <g>
+                      {layer.shape.shapeComponent({})}
+                    </g>
+                    <Show when={horizontalSymmetry()}>
+                      <g transform="scale(1, -1)">
+                        {layer.shape.shapeComponent({})}
+                      </g>
+                    </Show>
+                    <Show when={verticalSymmetry()}>
+                      <g transform="scale(-1, 1)">
+                        {layer.shape.shapeComponent({})}
+                      </g>
+                    </Show>
+                    <Show when={horizontalSymmetry() && verticalSymmetry()}>
+                      <g transform="scale(-1, -1)">
+                        {layer.shape.shapeComponent({})}
+                      </g>
+                    </Show>
+                    <Show when={radialSymmetryCount() > 1}>
+                      <For each={Array.from({ length: radialSymmetryCount() - 1 })}>
+                        {(_, i) => (
+                          <g transform={`rotate(${(i() + 1) * (360 / radialSymmetryCount())})`}>
+                            {layer.shape.shapeComponent({})}
+                          </g>
+                        )}
+                      </For>
+                    </Show>
                   </g>
-                  <Show when={horizontalSymmetry()}>
-                    <g transform="scale(1, -1)">
-                      {layer.shape.shapeComponent({})}
-                    </g>
-                  </Show>
-                  <Show when={verticalSymmetry()}>
-                    <g transform="scale(-1, 1)">
-                      {layer.shape.shapeComponent({})}
-                    </g>
-                  </Show>
-                  <Show when={horizontalSymmetry() && verticalSymmetry()}>
-                    <g transform="scale(-1, -1)">
-                      {layer.shape.shapeComponent({})}
-                    </g>
-                  </Show>
-                  <Show when={radialSymmetryCount() > 1}>
-                    <For each={Array.from({ length: radialSymmetryCount() - 1 })}>
-                      {(_, i) => (
-                        <g transform={`rotate(${(i() + 1) * (360 / radialSymmetryCount())})`}>
-                          {layer.shape.shapeComponent({})}
-                        </g>
-                      )}
-                    </For>
-                  </Show>
                 </g>
               )}
             </For>
@@ -325,38 +327,16 @@ function App() {
             <label style={{ 'font-weight': 'bold' }}>Symmetry</label>
             <Switch label="Horizontal" currentVal={horizontalSymmetry} updateVal={setHorizontalSymmetry} />
             <Switch label="Vertical" currentVal={verticalSymmetry} updateVal={setVerticalSymmetry} />
-            <div style={{ display: 'flex', 'flex-direction': 'column', gap: '0.5rem', 'margin-top': '0.5rem' }}>
-              <label>Radial Count: {radialSymmetryCount()}</label>
-              <input 
-                type="range" min="1" max="32" 
-                value={radialSymmetryCount()} 
-                onInput={(e) => setRadialSymmetryCount(parseInt(e.currentTarget.value))} 
-              />
-            </div>
+            <Slider label="Radial Count" min={1} max={32} currentVal={radialSymmetryCount} updateVal={setRadialSymmetryCount} />
           </div>
           <Switch label="Sync All Rotation" currentVal={syncRotation} updateVal={setSyncRotation} />
-          <div style={{ display: 'flex', 'flex-direction': 'column', gap: '0.5rem' }}>
-            <label>Master Rotation: {globalRotation()}°</label>
-            <input 
-              type="range" min="0" max="360" 
-              value={globalRotation()} 
-              onInput={(e) => {
-                const newVal = parseInt(e.currentTarget.value);
-                if (syncRotation()) {
-                  // This is a bit tricky since each shape has its own internal signal
-                  // The user wants global rotation to act as an offset or master control
-                  // For now, let's keep it as an SVG transform which effectively adds to internal rotation
-                }
-                setGlobalRotation(newVal);
-              }} 
-            />
-          </div>
+          <Slider label="Master Rotation" min={0} max={360} currentVal={globalRotation} updateVal={setGlobalRotation} />
         </div>
 
         <div style={{ display: 'flex', 'flex-direction': 'column', gap: '1rem', 'margin-bottom': '1rem' }}>
           <div style={{ display: 'flex', 'justify-content': 'space-between', 'align-items': 'center' }}>
             <h3 style={{ margin: 0 }}>Layers</h3>
-            <button onClick={() => setLayers([...layers(), { id: Date.now(), shape: shapes[0] }])}>+ Add Layer</button>
+            <button onClick={() => setLayers([...layers(), { id: Date.now(), shape: shapes[0], offset: { x: 0, y: 0 } }])}>+ Add Layer</button>
           </div>
           <For each={layers()}>
             {(layer, index) => (
@@ -367,21 +347,43 @@ function App() {
                     <button style={{ color: 'red' }} onClick={() => setLayers(layers().filter(l => l.id !== layer.id))}>Remove</button>
                   </Show>
                 </div>
-                  <Select
-                    label="Shape"
-                    selectedOption={() => layer.shape}
-                    updateSelectedOption={(newShape: Shape) => {
+                <Select
+                  label="Shape"
+                  selectedOption={() => layer.shape}
+                  updateSelectedOption={(newShape: Shape) => {
+                    const newLayers = [...layers()];
+                    newLayers[index()] = { ...layer, shape: newShape };
+                    setLayers(newLayers);
+                  }}
+                  options={shapes.sort((a, b) => a.name.localeCompare(b.name))}
+                  extractOptionValue={(shape: Shape) => shape.name}
+                  extractOptionLabel={(shape: Shape) => shape.name}
+                />
+                <div style={{ display: 'flex', 'flex-direction': 'column', gap: '0.5rem', 'margin-top': '0.5rem' }}>
+                  <Slider 
+                    label="Offset X" 
+                    min={-250} 
+                    max={250} 
+                    currentVal={() => layer.offset.x} 
+                    updateVal={(val) => {
                       const newLayers = [...layers()];
-                      newLayers[index()] = { ...layer, shape: newShape };
+                      newLayers[index()] = { ...layer, offset: { ...layer.offset, x: val } };
                       setLayers(newLayers);
-                    }}
-                    options={shapes.sort((a, b) => a.name.localeCompare(b.name))}
-                    extractOptionValue={(shape: Shape) => shape.name}
-                    extractOptionLabel={(shape: Shape) => shape.name}
+                    }} 
                   />
-                  <div style={{ display: 'flex', 'flex-direction': 'column', gap: '0.5rem', 'margin-top': '0.5rem' }}>
-                    {layer.shape.settingsComponent({})}
-                  </div>
+                  <Slider 
+                    label="Offset Y" 
+                    min={-250} 
+                    max={250} 
+                    currentVal={() => layer.offset.y} 
+                    updateVal={(val) => {
+                      const newLayers = [...layers()];
+                      newLayers[index()] = { ...layer, offset: { ...layer.offset, y: val } };
+                      setLayers(newLayers);
+                    }} 
+                  />
+                  {layer.shape.settingsComponent({})}
+                </div>
               </div>
             )}
           </For>
