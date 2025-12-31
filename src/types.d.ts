@@ -6,6 +6,6 @@ type Point = { x: number; y: number };
 
 type Shape = {
   name: string;
-  shapeComponent: Component;
+  shapeComponent: Component<{ masterRotation?: number }>;
   settingsComponent: Component;
 };

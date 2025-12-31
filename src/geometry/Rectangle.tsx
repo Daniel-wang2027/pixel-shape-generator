@@ -9,15 +9,15 @@ const [height, setHeight] = createSignal(25);
 const [rotation, setRotation] = createSignal(30);
 const [showDrawGuide, setShowDrawGuide] = createSignal(false);
 
-const ShapeComponent = (): JSX.Element => {
+const ShapeComponent = (props: { masterRotation?: number }): JSX.Element => {
   const a = () => width() / 2;
   const b = () => height() / 2;
-  //const radius = Math.hypot(a(), b());
-  const rotationRadians = () => (rotation() * Math.PI) / 180;
+  const rotationRadians = () => ((rotation() + (props.masterRotation || 0)) * Math.PI) / 180;
 
   const rotate = (x: number, y: number): { x: number; y: number } => {
-    const cos = Math.cos(rotationRadians());
-    const sin = Math.sin(rotationRadians());
+    const rad = rotationRadians();
+    const cos = Math.cos(rad);
+    const sin = Math.sin(rad);
     return {
       x: x * cos - y * sin,
       y: x * sin + y * cos,

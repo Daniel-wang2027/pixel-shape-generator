@@ -105,6 +105,16 @@ function App() {
   const [layers, setLayers] = createSignal([{ id: 0, shape: shapes[0], offset: { x: 0, y: 0 } }]);
   const [syncRotation, setSyncRotation] = createSignal(true);
   const [globalRotation, setGlobalRotation] = createSignal(0);
+  const [rotationTrigger, setRotationTrigger] = createSignal(0);
+
+  // Helper to force update all rotation signals
+  const applyMasterRotation = (val: number) => {
+    setGlobalRotation(val % 360);
+    // This is a bit of a hack since shape signals are module-level
+    // We'll rely on the fact that we can just update them if they were exported
+    // But they aren't. However, the user said "ADD the rotation to every shape"
+    // The most reliable way "on the grid" is to apply it in the coordinate math.
+  };
 
   // debounced cell counting on shape renders
   onMount(() => {
@@ -240,41 +250,33 @@ function App() {
                 return (
                   <g>
                     {/* Primary Shape */}
-                    <g transform={`rotate(${masterRot})`}>
-                      <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
-                        {layer.shape.shapeComponent({})}
-                      </g>
+                    <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
+                      {layer.shape.shapeComponent({ masterRotation: globalRotation() })}
                     </g>
                     
                     {/* Horizontal Symmetry */}
                     <Show when={horizontalSymmetry()}>
-                      <g transform={`rotate(${masterRot})`}>
-                        <g transform="scale(1, -1)">
-                          <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
-                            {layer.shape.shapeComponent({})}
-                          </g>
+                      <g transform="scale(1, -1)">
+                        <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
+                          {layer.shape.shapeComponent({ masterRotation: globalRotation() })}
                         </g>
                       </g>
                     </Show>
 
                     {/* Vertical Symmetry */}
                     <Show when={verticalSymmetry()}>
-                      <g transform={`rotate(${masterRot})`}>
-                        <g transform="scale(-1, 1)">
-                          <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
-                            {layer.shape.shapeComponent({})}
-                          </g>
+                      <g transform="scale(-1, 1)">
+                        <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
+                          {layer.shape.shapeComponent({ masterRotation: globalRotation() })}
                         </g>
                       </g>
                     </Show>
 
                     {/* Both Symmetries */}
                     <Show when={horizontalSymmetry() && verticalSymmetry()}>
-                      <g transform={`rotate(${masterRot})`}>
-                        <g transform="scale(-1, -1)">
-                          <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
-                            {layer.shape.shapeComponent({})}
-                          </g>
+                      <g transform="scale(-1, -1)">
+                        <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
+                          {layer.shape.shapeComponent({ masterRotation: globalRotation() })}
                         </g>
                       </g>
                     </Show>
@@ -285,9 +287,9 @@ function App() {
                         {(_, i) => {
                           const radialAngle = (i() + 1) * (360 / radialSymmetryCount());
                           return (
-                            <g transform={`rotate(${masterRot + radialAngle})`}>
+                            <g transform={`rotate(${radialAngle})`}>
                               <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
-                                {layer.shape.shapeComponent({})}
+                                {layer.shape.shapeComponent({ masterRotation: globalRotation() })}
                               </g>
                             </g>
                           );
