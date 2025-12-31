@@ -8,6 +8,7 @@ const CellLine = (props: {
   y2: number;
   thickness?: number;
   debug?: boolean;
+  transform?: string;
 }) => {
   const dx = props.x2 - props.x1;
   const dy = props.y2 - props.y1;
@@ -45,6 +46,7 @@ const CellLine = (props: {
           debug={props.debug}
           x={p.x}
           y={p.y}
+          transform={props.transform}
         />
       )}
     </For>

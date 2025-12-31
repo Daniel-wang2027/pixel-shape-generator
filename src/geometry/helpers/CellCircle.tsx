@@ -8,6 +8,7 @@ const CellCircle = (props: {
   diameter: number;
   thickness?: number;
   debug?: boolean;
+  transform?: string;
 }) => {
   const thickness = () => props.thickness ?? 1;
 
@@ -41,7 +42,7 @@ const CellCircle = (props: {
 
   return (
     <For each={points}>
-      {(c) => <Cell x={c.x} y={c.y} debug={props.debug} />}
+      {(c) => <Cell x={c.x} y={c.y} debug={props.debug} transform={props.transform} />}
     </For>
   );
 };

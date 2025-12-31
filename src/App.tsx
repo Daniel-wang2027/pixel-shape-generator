@@ -112,8 +112,8 @@ function App() {
       const cells = document.getElementsByClassName('cell');
       const uniqueCells = new Set<string>();
       for (const cell of cells) {
-        const x = cell.getAttribute('x');
-        const y = cell.getAttribute('y');
+        const x = Math.round(parseFloat(cell.getAttribute('x') || '0'));
+        const y = Math.round(parseFloat(cell.getAttribute('y') || '0'));
         uniqueCells.add(`${x},${y}`);
       }
       return uniqueCells.size;
@@ -227,47 +227,76 @@ function App() {
             viewBox={`${camera().position.x * camera().zoom} ${camera().position.y * camera().zoom} ${camera().zoom * outputSize().width} ${camera().zoom * outputSize().height}`}
           >
             <For each={layers()}>
-              {(layer) => (
-                <g transform={`rotate(${globalRotation()})`}>
+              {(layer) => {
+                const rotationTransform = (angle: number) => {
+                  const rad = (angle * Math.PI) / 180;
+                  const cos = Math.cos(rad);
+                  const sin = Math.sin(rad);
+                  return `matrix(${cos}, ${sin}, ${-sin}, ${cos}, 0, 0)`;
+                };
+
+                const masterRot = globalRotation();
+
+                return (
                   <g>
-                    <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
-                      {layer.shape.shapeComponent({})}
+                    {/* Primary Shape */}
+                    <g transform={`rotate(${masterRot})`}>
+                      <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
+                        {layer.shape.shapeComponent({})}
+                      </g>
                     </g>
+                    
+                    {/* Horizontal Symmetry */}
                     <Show when={horizontalSymmetry()}>
-                      <g transform="scale(1, -1)">
-                        <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
-                          {layer.shape.shapeComponent({})}
+                      <g transform={`rotate(${masterRot})`}>
+                        <g transform="scale(1, -1)">
+                          <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
+                            {layer.shape.shapeComponent({})}
+                          </g>
                         </g>
                       </g>
                     </Show>
+
+                    {/* Vertical Symmetry */}
                     <Show when={verticalSymmetry()}>
-                      <g transform="scale(-1, 1)">
-                        <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
-                          {layer.shape.shapeComponent({})}
+                      <g transform={`rotate(${masterRot})`}>
+                        <g transform="scale(-1, 1)">
+                          <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
+                            {layer.shape.shapeComponent({})}
+                          </g>
                         </g>
                       </g>
                     </Show>
+
+                    {/* Both Symmetries */}
                     <Show when={horizontalSymmetry() && verticalSymmetry()}>
-                      <g transform="scale(-1, -1)">
-                        <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
-                          {layer.shape.shapeComponent({})}
+                      <g transform={`rotate(${masterRot})`}>
+                        <g transform="scale(-1, -1)">
+                          <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
+                            {layer.shape.shapeComponent({})}
+                          </g>
                         </g>
                       </g>
                     </Show>
+
+                    {/* Radial Symmetry */}
                     <Show when={radialSymmetryCount() > 1}>
                       <For each={Array.from({ length: radialSymmetryCount() - 1 })}>
-                        {(_, i) => (
-                          <g transform={`rotate(${(i() + 1) * (360 / radialSymmetryCount())})`}>
-                            <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
-                              {layer.shape.shapeComponent({})}
+                        {(_, i) => {
+                          const radialAngle = (i() + 1) * (360 / radialSymmetryCount());
+                          return (
+                            <g transform={`rotate(${masterRot + radialAngle})`}>
+                              <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
+                                {layer.shape.shapeComponent({})}
+                              </g>
                             </g>
-                          </g>
-                        )}
+                          );
+                        }}
                       </For>
                     </Show>
                   </g>
-                </g>
-              )}
+                );
+              }}
             </For>
           </svg>
         <svg
