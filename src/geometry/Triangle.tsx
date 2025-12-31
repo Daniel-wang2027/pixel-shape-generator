@@ -7,13 +7,22 @@ const [base, setBase] = createSignal(40);
 const [height, setHeight] = createSignal(40);
 const [thickness, setThickness] = createSignal(1);
 
-const ShapeComponent = (): JSX.Element => {
+const ShapeComponent = (props: { masterRotation?: number }): JSX.Element => {
   const points = () => {
     const b = base();
     const h = height();
-    const v1 = { x: 0, y: -h / 2 };
-    const v2 = { x: -b / 2, y: h / 2 };
-    const v3 = { x: b / 2, y: h / 2 };
+    const rad = ((props.masterRotation || 0) * Math.PI) / 180;
+    const cos = Math.cos(rad);
+    const sin = Math.sin(rad);
+
+    const rotate = (p: { x: number; y: number }) => ({
+      x: p.x * cos - p.y * sin,
+      y: p.x * sin + p.y * cos,
+    });
+
+    const v1 = rotate({ x: 0, y: -h / 2 });
+    const v2 = rotate({ x: -b / 2, y: h / 2 });
+    const v3 = rotate({ x: b / 2, y: h / 2 });
 
     return [
       { p1: v1, p2: v2 },

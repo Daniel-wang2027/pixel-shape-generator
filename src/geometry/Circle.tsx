@@ -12,8 +12,20 @@ const [showGuide, setShowGuide] = createSignal(false);
 const [showBounds, setShowBounds] = createSignal(false);
 const [showCenter, setShowCenter] = createSignal(false);
 
-const ShapeComponent = (): JSX.Element => {
+const ShapeComponent = (props: { masterRotation?: number }): JSX.Element => {
   const d = diameter();
+  const rotationRadians = () => ((props.masterRotation || 0) * Math.PI) / 180;
+  
+  const rotate = (x: number, y: number): { x: number; y: number } => {
+    const rad = rotationRadians();
+    const cos = Math.cos(rad);
+    const sin = Math.sin(rad);
+    return {
+      x: x * cos - y * sin,
+      y: x * sin + y * cos,
+    };
+  };
+
   let r = (d - 1) / 2;
   r += 0.1 * (r > 2 ? -1 : 1);
 
@@ -25,26 +37,34 @@ const ShapeComponent = (): JSX.Element => {
   const top = offset - r;
   const bottom = offset + r;
 
+  const c1 = rotate(left, top);
+  const c2 = rotate(right, top);
+  const c3 = rotate(right, bottom);
+  const c4 = rotate(left, bottom);
+
   return (
     <>
       <Show when={showBounds()}>
-        <CellLine debug x1={left} y1={top} x2={right} y2={top} />
-        <CellLine debug x1={right} y1={top} x2={right} y2={bottom} />
-        <CellLine debug x1={right} y1={bottom} x2={left} y2={bottom} />
-        <CellLine debug x1={left} y1={bottom} x2={left} y2={top} />
+        <CellLine debug x1={c1.x} y1={c1.y} x2={c2.x} y2={c2.y} />
+        <CellLine debug x1={c2.x} y1={c2.y} x2={c3.x} y2={c3.y} />
+        <CellLine debug x1={c3.x} y1={c3.y} x2={c4.x} y2={c4.y} />
+        <CellLine debug x1={c4.x} y1={c4.y} x2={c1.x} y2={c1.y} />
       </Show>
       <Show when={showCenter()}>
-        <CellLine debug x1={0} y1={top} x2={0} y2={bottom} />
-        <CellLine debug x1={left} y1={0} x2={right} y2={0} />
-        <Show when={isEven}>
-          <CellLine debug x1={left} y1={1} x2={right} y2={1} />
-          <CellLine debug x1={1} y1={top} x2={1} y2={bottom} />
-        </Show>
+        {(() => {
+          const vTop = rotate(0, top);
+          const vBottom = rotate(0, bottom);
+          const hLeft = rotate(left, 0);
+          const hRight = rotate(right, 0);
+          return (
+            <>
+              <CellLine debug x1={vTop.x} y1={vTop.y} x2={vBottom.x} y2={vBottom.y} />
+              <CellLine debug x1={hLeft.x} y1={hLeft.y} x2={hRight.x} y2={hRight.y} />
+            </>
+          );
+        })()}
       </Show>
-      <CellCircle x={0} y={0} diameter={d} thickness={thickness()} />
-      <Show when={showGuide()}>
-        <circle cx={offset + 0.5} cy={offset + 0.5} r={r} class="draw-guide" />
-      </Show>
+      <CellCircle x={0} y={0} diameter={d} thickness={thickness()} transform={props.masterRotation ? `rotate(${props.masterRotation})` : undefined} />
     </>
   );
 };

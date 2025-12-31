@@ -9,11 +9,11 @@ const [pointsCount, setPointsCount] = createSignal(6);
 const [rotation, setRotation] = createSignal(0);
 const [thickness, setThickness] = createSignal(1);
 
-const ShapeComponent = (): JSX.Element => {
+const ShapeComponent = (props: { masterRotation?: number }): JSX.Element => {
   const points = () => {
     const or = outerRadius();
     const ir = innerRadius();
-    const rad = (rotation() * Math.PI) / 180;
+    const rad = ((rotation() + (props.masterRotation || 0)) * Math.PI) / 180;
     const n = pointsCount();
 
     const rotate = (p: { x: number; y: number }) => ({

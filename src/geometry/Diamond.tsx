@@ -7,7 +7,7 @@ const [width, setWidth] = createSignal(40);
 const [height, setHeight] = createSignal(60);
 const [rotation, setRotation] = createSignal(0);
 
-const ShapeComponent = (): JSX.Element => {
+const ShapeComponent = (props: { masterRotation?: number }): JSX.Element => {
   const points = () => {
     const pts = [
       { x: 0, y: -height() / 2 },
@@ -15,7 +15,7 @@ const ShapeComponent = (): JSX.Element => {
       { x: 0, y: height() / 2 },
       { x: -width() / 2, y: 0 },
     ];
-    const rad = (rotation() * Math.PI) / 180;
+    const rad = ((rotation() + (props.masterRotation || 0)) * Math.PI) / 180;
     
     return pts.map(p => ({
       x: p.x * Math.cos(rad) - p.y * Math.sin(rad),
