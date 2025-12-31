@@ -17,7 +17,7 @@ const [diameter, setDiameter] = createSignal(30);
 const [rotation, setRotation] = createSignal(0);
 const [showDrawGuide, setShowDrawGuide] = createSignal(false);
 
-const ShapeComponent = () => {
+const ShapeComponent = (props: { masterRotation?: number }) => {
   const theta = createMemo(() => (2 * Math.PI) / sides());
   const radius = createMemo(() => diameter() / 2);
   const arcRadius = createMemo(() =>
@@ -25,7 +25,7 @@ const ShapeComponent = () => {
       2 * radius() ** 2 * (1 - Math.cos(theta() * Math.floor(sides() / 2)))
     )
   );
-  const rotationRadians = createMemo(() => (rotation() * Math.PI) / 180);
+  const rotationRadians = createMemo(() => ((rotation() + (props.masterRotation || 0)) * Math.PI) / 180);
 
   const arcs = () =>
     Array.from({ length: sides() }).map((_, i) => {

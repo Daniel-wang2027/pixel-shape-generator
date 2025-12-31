@@ -7,12 +7,12 @@ const [width, setWidth] = createSignal(60);
 const [radius, setRadius] = createSignal(20);
 const [rotation, setRotation] = createSignal(0);
 
-const ShapeComponent = (): JSX.Element => {
+const ShapeComponent = (props: { masterRotation?: number }): JSX.Element => {
   const points = () => {
     const pts: { x: number; y: number }[] = [];
     const w = width() / 2;
     const r = radius();
-    const rad = (rotation() * Math.PI) / 180;
+    const rad = ((rotation() + (props.masterRotation || 0)) * Math.PI) / 180;
 
     // Top semi-circle
     for (let t = Math.PI; t <= 2 * Math.PI; t += 0.2) {

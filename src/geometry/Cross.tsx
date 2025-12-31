@@ -10,24 +10,21 @@ const [horizontalBarOffset, setHorizontalBarOffset] = createSignal(0);
 const [verticalBarOffset, setVerticalBarOffset] = createSignal(0);
 const [rotation, setRotation] = createSignal(0);
 
-const ShapeComponent = (): JSX.Element => {
+const ShapeComponent = (props: { masterRotation?: number }): JSX.Element => {
   const points = () => {
     const t = thickness() / 2;
     const hl = horizontalLength() / 2;
     const vl = verticalLength() / 2;
     const hOff = horizontalBarOffset();
     const vOff = verticalBarOffset();
-
-    // The cross is made of 12 points. 
-    // We adjust the horizontal bar points with vOff (moves it up/down)
-    // and the vertical bar points with hOff (moves it left/right)
+    const rad = ((rotation() + (props.masterRotation || 0)) * Math.PI) / 180;
+    
     const pts = [
       { x: -t + hOff, y: -vl }, { x: t + hOff, y: -vl }, { x: t + hOff, y: -t + vOff },
       { x: hl, y: -t + vOff }, { x: hl, y: t + vOff }, { x: t + hOff, y: t + vOff },
       { x: t + hOff, y: vl }, { x: -t + hOff, y: vl }, { x: -t + hOff, y: t + vOff },
       { x: -hl, y: t + vOff }, { x: -hl, y: -t + vOff }, { x: -t + hOff, y: -t + vOff },
     ];
-    const rad = (rotation() * Math.PI) / 180;
 
     return pts.map((p) => ({
       x: p.x * Math.cos(rad) - p.y * Math.sin(rad),

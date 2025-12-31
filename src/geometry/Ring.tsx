@@ -7,11 +7,11 @@ const [outerDiameter, setOuterDiameter] = createSignal(40);
 const [innerDiameter, setInnerDiameter] = createSignal(20);
 const [thickness, setThickness] = createSignal(1);
 
-const ShapeComponent = (): JSX.Element => {
+const ShapeComponent = (props: { masterRotation?: number }): JSX.Element => {
   return (
     <>
-      <CellCircle x={0} y={0} diameter={outerDiameter()} thickness={thickness()} />
-      <CellCircle x={0} y={0} diameter={innerDiameter()} thickness={thickness()} />
+      <CellCircle x={0} y={0} diameter={outerDiameter()} thickness={thickness()} transform={props.masterRotation ? `rotate(${props.masterRotation})` : undefined} />
+      <CellCircle x={0} y={0} diameter={innerDiameter()} thickness={thickness()} transform={props.masterRotation ? `rotate(${props.masterRotation})` : undefined} />
     </>
   );
 };

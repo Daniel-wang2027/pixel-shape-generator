@@ -238,36 +238,29 @@ function App() {
           >
             <For each={layers()}>
               {(layer) => {
-                const rotationTransform = (angle: number) => {
-                  const rad = (angle * Math.PI) / 180;
-                  const cos = Math.cos(rad);
-                  const sin = Math.sin(rad);
-                  return `matrix(${cos}, ${sin}, ${-sin}, ${cos}, 0, 0)`;
-                };
-
                 const masterRot = globalRotation();
 
                 return (
                   <g>
                     {/* Primary Shape */}
                     <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
-                      {layer.shape.shapeComponent({ masterRotation: globalRotation() })}
+                      {layer.shape.shapeComponent({ masterRotation: masterRot })}
                     </g>
                     
-                    {/* Horizontal Symmetry */}
+                    {/* Horizontal Symmetry (Mirror across Y=0) */}
                     <Show when={horizontalSymmetry()}>
                       <g transform="scale(1, -1)">
                         <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
-                          {layer.shape.shapeComponent({ masterRotation: globalRotation() })}
+                          {layer.shape.shapeComponent({ masterRotation: masterRot })}
                         </g>
                       </g>
                     </Show>
 
-                    {/* Vertical Symmetry */}
+                    {/* Vertical Symmetry (Mirror across X=0) */}
                     <Show when={verticalSymmetry()}>
                       <g transform="scale(-1, 1)">
                         <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
-                          {layer.shape.shapeComponent({ masterRotation: globalRotation() })}
+                          {layer.shape.shapeComponent({ masterRotation: masterRot })}
                         </g>
                       </g>
                     </Show>
@@ -276,7 +269,7 @@ function App() {
                     <Show when={horizontalSymmetry() && verticalSymmetry()}>
                       <g transform="scale(-1, -1)">
                         <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
-                          {layer.shape.shapeComponent({ masterRotation: globalRotation() })}
+                          {layer.shape.shapeComponent({ masterRotation: masterRot })}
                         </g>
                       </g>
                     </Show>
@@ -289,7 +282,7 @@ function App() {
                           return (
                             <g transform={`rotate(${radialAngle})`}>
                               <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
-                                {layer.shape.shapeComponent({ masterRotation: globalRotation() })}
+                                {layer.shape.shapeComponent({ masterRotation: masterRot })}
                               </g>
                             </g>
                           );

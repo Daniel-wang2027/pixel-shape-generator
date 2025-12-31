@@ -11,10 +11,13 @@ const [exponent, setExponent] = createSignal(4);
 const [showBounds, setShowBounds] = createSignal(false);
 const [showCenter, setShowCenter] = createSignal(false);
 
-const ShapeComponent = (): JSX.Element => {
+const ShapeComponent = (props: { masterRotation?: number }): JSX.Element => {
   const n = exponent();
   const a = width() / 2;
   const b = height() / 2;
+  const rad = ((props.masterRotation || 0) * Math.PI) / 180;
+  const cos = Math.cos(rad);
+  const sin = Math.sin(rad);
 
   let cx = width() % 2 === 0 ? 0.5 : 0;
   let cy = height() % 2 === 0 ? 0.5 : 0;
@@ -45,30 +48,49 @@ const ShapeComponent = (): JSX.Element => {
   return (
     <>
       <Show when={showBounds()}>
-        <CellLine x1={left} y1={top} x2={right} y2={top} debug />
-        <CellLine x1={right} y1={top} x2={right} y2={bottom} debug />
-        <CellLine x1={right} y1={bottom} x2={left} y2={bottom} debug />
-        <CellLine x1={left} y1={bottom} x2={left} y2={top} debug />
+        {(() => {
+          const c1 = { x: left * cos - top * sin, y: left * sin + top * cos };
+          const c2 = { x: right * cos - top * sin, y: right * sin + top * cos };
+          const c3 = { x: right * cos - bottom * sin, y: right * sin + bottom * cos };
+          const c4 = { x: left * cos - bottom * sin, y: left * sin + bottom * cos };
+          return (
+            <>
+              <CellLine x1={c1.x} y1={c1.y} x2={c2.x} y2={c2.y} debug />
+              <CellLine x1={c2.x} y1={c2.y} x2={c3.x} y2={c3.y} debug />
+              <CellLine x1={c3.x} y1={c3.y} x2={c4.x} y2={c4.y} debug />
+              <CellLine x1={c4.x} y1={c4.y} x2={c1.x} y2={c1.y} debug />
+            </>
+          );
+        })()}
       </Show>
       <Show when={showCenter()}>
-        <Show when={height() % 2 === 0}>
-          <CellLine x1={left} y1={1} x2={right} y2={1} debug />
-        </Show>
-        <Show when={width() % 2 === 0}>
-          <CellLine x1={1} y1={top} x2={1} y2={bottom} debug />
-        </Show>
-        <CellLine x1={0} y1={top} x2={0} y2={bottom} debug />
-        <CellLine x1={left} y1={0} x2={right} y2={0} debug />
+        {(() => {
+          const vTop = { x: 0 * cos - top * sin, y: 0 * sin + top * cos };
+          const vBottom = { x: 0 * cos - bottom * sin, y: 0 * sin + bottom * cos };
+          const hLeft = { x: left * cos - 0 * sin, y: left * sin + 0 * cos };
+          const hRight = { x: right * cos - 0 * sin, y: right * sin + 0 * cos };
+          return (
+            <>
+              <CellLine x1={vTop.x} y1={vTop.y} x2={vBottom.x} y2={vBottom.y} debug />
+              <CellLine x1={hLeft.x} y1={hLeft.y} x2={hRight.x} y2={hRight.y} debug />
+            </>
+          );
+        })()}
       </Show>
       <For each={points}>
-        {(p) => (
-          <>
-            <Cell x={cx + p.x} y={cy + p.y} />
-            <Cell x={cx - p.x} y={cy + p.y} />
-            <Cell x={cx + p.x} y={cy - p.y} />
-            <Cell x={cx - p.x} y={cy - p.y} />
-          </>
-        )}
+        {(p) => {
+          const pts = [
+            { x: cx + p.x, y: cy + p.y },
+            { x: cx - p.x, y: cy + p.y },
+            { x: cx + p.x, y: cy - p.y },
+            { x: cx - p.x, y: cy - p.y }
+          ];
+          return (
+            <For each={pts}>
+              {(pt) => <Cell x={pt.x * cos - pt.y * sin} y={pt.x * sin + pt.y * cos} />}
+            </For>
+          );
+        }}
       </For>
     </>
   );

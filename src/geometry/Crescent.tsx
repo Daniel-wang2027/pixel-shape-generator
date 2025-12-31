@@ -8,10 +8,10 @@ const [innerRadius, setInnerRadius] = createSignal(40);
 const [offset, setOffset] = createSignal(15);
 const [rotation, setRotation] = createSignal(0);
 
-const ShapeComponent = (): JSX.Element => {
+const ShapeComponent = (props: { masterRotation?: number }): JSX.Element => {
   const points = () => {
     const pts: { x: number; y: number }[] = [];
-    const rad = (rotation() * Math.PI) / 180;
+    const rad = ((rotation() + (props.masterRotation || 0)) * Math.PI) / 180;
     const or = outerRadius();
     const ir = innerRadius();
     const off = offset();

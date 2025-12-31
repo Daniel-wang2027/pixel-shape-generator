@@ -11,14 +11,15 @@ const [rotation, setRotation] = createSignal(30);
 const [invert, setInvert] = createSignal(false);
 const [showDrawGuide, setShowDrawGuide] = createSignal(false);
 
-const ShapeComponent = (): JSX.Element => {
+const ShapeComponent = (props: { masterRotation?: number }): JSX.Element => {
   let k = 0;
   const radius = diameter() / 2;
   const radiusStep = radius / sides() / loops();
   let verts: { x: number; y: number }[] = [];
+  const mRot = props.masterRotation || 0;
   for (let i = 0; i < loops(); i++) {
     for (let j = 0; j < sides(); j++) {
-      const angle = (j * 2 * Math.PI) / sides() + (rotation() * Math.PI) / 180;
+      const angle = (j * 2 * Math.PI) / sides() + ((rotation() + mRot) * Math.PI) / 180;
       verts.push({
         x: (invert() ? -1 : 1) * radiusStep * k * Math.cos(angle),
         y: radiusStep * k * Math.sin(angle),

@@ -13,17 +13,18 @@ const [showPerpendicularBisectors, setShowPerpendicularBisectors] =
   createSignal(false);
 const [showDrawGuide, setShowDrawGuide] = createSignal(false);
 
-const calculateVertex = (i: number): { x: number; y: number } => {
+const calculateVertex = (i: number, masterRotation: number): { x: number; y: number } => {
   const radius = diameter() / 2;
-  const angle = (i * 2 * Math.PI) / sides() + (rotation() * Math.PI) / 180;
+  const angle = (i * 2 * Math.PI) / sides() + ((rotation() + masterRotation) * Math.PI) / 180;
   return {
     x: radius * Math.cos(angle),
     y: radius * Math.sin(angle),
   };
 };
 
-const ShapeComponent = (): JSX.Element => {
-  const verts = Array.from({ length: sides() }, (_, i) => calculateVertex(i));
+const ShapeComponent = (props: { masterRotation?: number }): JSX.Element => {
+  const mRot = () => props.masterRotation || 0;
+  const verts = Array.from({ length: sides() }, (_, i) => calculateVertex(i, mRot()));
   return (
     <>
       <Show when={showAngleBisectors()}>

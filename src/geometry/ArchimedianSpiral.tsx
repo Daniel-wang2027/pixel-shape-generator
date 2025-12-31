@@ -9,9 +9,9 @@ const [diameter, setDiameter] = createSignal(25);
 const [rotation, setRotation] = createSignal(0);
 const [invert, setInvert] = createSignal(false);
 
-const ShapeComponent = (): JSX.Element => {
+const ShapeComponent = (props: { masterRotation?: number }): JSX.Element => {
   const a = diameter() / 4 / loops() / Math.PI;
-  const r = (rotation() * Math.PI) / 180;
+  const r = ((rotation() + (props.masterRotation || 0)) * Math.PI) / 180;
   let lastX = Infinity;
   let lastY = Infinity;
   let theta = loops() * 2 * Math.PI;

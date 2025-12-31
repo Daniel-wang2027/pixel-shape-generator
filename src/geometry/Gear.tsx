@@ -8,11 +8,11 @@ const [outerRadius, setOuterRadius] = createSignal(40);
 const [innerRadius, setInnerRadius] = createSignal(30);
 const [rotation, setRotation] = createSignal(0);
 
-const ShapeComponent = (): JSX.Element => {
+const ShapeComponent = (props: { masterRotation?: number }): JSX.Element => {
   const points = () => {
     const pts: { x: number; y: number }[] = [];
     const n = teeth() * 2;
-    const rad = (rotation() * Math.PI) / 180;
+    const rad = ((rotation() + (props.masterRotation || 0)) * Math.PI) / 180;
     
     for (let i = 0; i < n * 2; i++) {
       const angle = (i * Math.PI) / n + rad;

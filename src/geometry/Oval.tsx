@@ -7,11 +7,15 @@ const [width, setWidth] = createSignal(50);
 const [height, setHeight] = createSignal(30);
 const [thickness, setThickness] = createSignal(1);
 
-const ShapeComponent = (): JSX.Element => {
+const ShapeComponent = (props: { masterRotation?: number }): JSX.Element => {
   const points = () => {
     const w = width();
     const h = height();
     const th = thickness();
+    const rad = ((props.masterRotation || 0) * Math.PI) / 180;
+    const cos = Math.cos(rad);
+    const sin = Math.sin(rad);
+    
     const pts: Point[] = [];
     const halfTh = (th - 1) / 2;
 
@@ -22,13 +26,13 @@ const ShapeComponent = (): JSX.Element => {
       // Basic ellipse rasterization (midpoint-ish)
       for (let x = -a; x <= a; x++) {
         const y = b * Math.sqrt(Math.max(0, 1 - (x * x) / (a * a)));
-        pts.push({ x: Math.round(x), y: Math.round(y) });
-        pts.push({ x: Math.round(x), y: Math.round(-y) });
+        pts.push({ x: x * cos - y * sin, y: x * sin + y * cos });
+        pts.push({ x: x * cos - (-y) * sin, y: x * sin + (-y) * cos });
       }
       for (let y = -b; y <= b; y++) {
         const x = a * Math.sqrt(Math.max(0, 1 - (y * y) / (b * b)));
-        pts.push({ x: Math.round(x), y: Math.round(y) });
-        pts.push({ x: Math.round(-x), y: Math.round(y) });
+        pts.push({ x: x * cos - y * sin, y: x * sin + y * cos });
+        pts.push({ x: (-x) * cos - y * sin, y: (-x) * sin + y * cos });
       }
     }
     return pts;
