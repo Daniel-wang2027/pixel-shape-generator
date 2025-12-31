@@ -24,7 +24,11 @@ const Slider = ({
       validity: { valid },
     } = event.currentTarget;
     if (!valid) return;
-    updateVal(valueAsNumber);
+    
+    // Use requestAnimationFrame for smoother slider updates
+    requestAnimationFrame(() => {
+      updateVal(valueAsNumber);
+    });
   };
 
   const handleBlur: JSX.EventHandler<HTMLInputElement, FocusEvent> = (

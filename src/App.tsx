@@ -122,7 +122,7 @@ function App() {
     const updateCellCount = debounce(() => {
       setCellCount(getNumberUniqueCells());
       setIsCountingCells(false);
-    }, 500);
+    }, 150);
 
     const observer = new MutationObserver((mutations) => {
       const includesCellNode = (nodes: NodeList): boolean => {
