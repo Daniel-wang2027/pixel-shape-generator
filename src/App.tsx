@@ -257,7 +257,7 @@ function App() {
                     <Show when={radialSymmetryCount() > 1}>
                       <For each={Array.from({ length: radialSymmetryCount() - 1 })}>
                         {(_, i) => (
-                          <g transform={`rotate(${(i() + 1) * Math.round(360 / radialSymmetryCount() / 15) * 15})`}>
+                          <g transform={`rotate(${(i() + 1) * (360 / radialSymmetryCount())})`}>
                             <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
                               {layer.shape.shapeComponent({})}
                             </g>
@@ -339,7 +339,7 @@ function App() {
             <Slider label="Radial Count" min={1} max={32} currentVal={radialSymmetryCount} updateVal={setRadialSymmetryCount} />
           </div>
           <Switch label="Sync All Rotation" currentVal={syncRotation} updateVal={setSyncRotation} />
-          <Slider label="Master Rotation" min={0} max={360} step={15} currentVal={globalRotation} updateVal={setGlobalRotation} />
+          <Slider label="Master Rotation" min={0} max={360} step={1} currentVal={globalRotation} updateVal={(val) => setGlobalRotation(val % 360)} />
         </div>
 
         <div style={{ display: 'flex', 'flex-direction': 'column', gap: '1rem', 'margin-bottom': '1rem' }}>
