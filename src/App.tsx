@@ -229,30 +229,38 @@ function App() {
             <For each={layers()}>
               {(layer) => (
                 <g transform={`rotate(${globalRotation()})`}>
-                  <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
-                    <g>
+                  <g>
+                    <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
                       {layer.shape.shapeComponent({})}
                     </g>
                     <Show when={horizontalSymmetry()}>
                       <g transform="scale(1, -1)">
-                        {layer.shape.shapeComponent({})}
+                        <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
+                          {layer.shape.shapeComponent({})}
+                        </g>
                       </g>
                     </Show>
                     <Show when={verticalSymmetry()}>
                       <g transform="scale(-1, 1)">
-                        {layer.shape.shapeComponent({})}
+                        <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
+                          {layer.shape.shapeComponent({})}
+                        </g>
                       </g>
                     </Show>
                     <Show when={horizontalSymmetry() && verticalSymmetry()}>
                       <g transform="scale(-1, -1)">
-                        {layer.shape.shapeComponent({})}
+                        <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
+                          {layer.shape.shapeComponent({})}
+                        </g>
                       </g>
                     </Show>
                     <Show when={radialSymmetryCount() > 1}>
                       <For each={Array.from({ length: radialSymmetryCount() - 1 })}>
                         {(_, i) => (
                           <g transform={`rotate(${(i() + 1) * (360 / radialSymmetryCount())})`}>
-                            {layer.shape.shapeComponent({})}
+                            <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
+                              {layer.shape.shapeComponent({})}
+                            </g>
                           </g>
                         )}
                       </For>
