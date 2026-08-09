@@ -32,6 +32,7 @@ import Oval from './geometry/Oval.tsx';
 import Ring from './geometry/Ring.tsx';
 
 import { downloadSVG, downloadPNG, downloadPBM } from './download.ts';
+import { CellTransformProvider } from './geometry/helpers/Cell.tsx';
 import {
   camera,
   panCamera,
@@ -102,18 +103,64 @@ function App() {
   const [horizontalSymmetry, setHorizontalSymmetry] = createSignal(false);
   const [verticalSymmetry, setVerticalSymmetry] = createSignal(false);
   const [radialSymmetryCount, setRadialSymmetryCount] = createSignal(1);
-  const [layers, setLayers] = createSignal([{ id: 0, shape: shapes[0], offset: { x: 0, y: 0 } }]);
+  const [layers, setLayers] = createSignal([
+    { id: 0, shape: shapes[0], offset: { x: 0, y: 0 } },
+  ]);
   const [syncRotation, setSyncRotation] = createSignal(true);
   const [globalRotation, setGlobalRotation] = createSignal(0);
-  const [rotationTrigger, setRotationTrigger] = createSignal(0);
 
-  // Helper to force update all rotation signals
-  const applyMasterRotation = (val: number) => {
-    setGlobalRotation(val % 360);
-    // This is a bit of a hack since shape signals are module-level
-    // We'll rely on the fact that we can just update them if they were exported
-    // But they aren't. However, the user said "ADD the rotation to every shape"
-    // The most reliable way "on the grid" is to apply it in the coordinate math.
+  type CopyTransform = {
+    angle: number;
+    mirrorX?: boolean;
+    mirrorY?: boolean;
+  };
+
+  const symmetryCopies = () => {
+    const copies: CopyTransform[] = [{ angle: 0 }];
+    if (horizontalSymmetry()) copies.push({ angle: 0, mirrorY: true });
+    if (verticalSymmetry()) copies.push({ angle: 0, mirrorX: true });
+    if (horizontalSymmetry() && verticalSymmetry()) {
+      copies.push({ angle: 0, mirrorX: true, mirrorY: true });
+    }
+    return copies;
+  };
+
+  const radialCopies = () =>
+    Array.from({ length: radialSymmetryCount() }, (_, index) => index);
+
+  // Transform the rasterized cells, not the SVG <rect> elements. SVG transforms
+  // rotate the one-unit squares themselves and leave their x/y attributes
+  // fractional, which makes radial copies drift off the pixel grid.
+  const cellTransform = (
+    offset: { x: number; y: number },
+    copy: CopyTransform
+  ) => {
+    const masterRadians =
+      ((syncRotation() ? globalRotation() : 0) * Math.PI) / 180;
+    const copyRadians = (copy.angle * Math.PI) / 180;
+    const masterCos = Math.cos(masterRadians);
+    const masterSin = Math.sin(masterRadians);
+    const copyCos = Math.cos(copyRadians);
+    const copySin = Math.sin(copyRadians);
+
+    return ({ x, y }: { x: number; y: number }) => {
+      // The layer offset belongs to the shape before symmetry is applied.
+      let nextX = x * masterCos - y * masterSin + offset.x;
+      let nextY = x * masterSin + y * masterCos + offset.y;
+
+      if (copy.mirrorX) nextX = -nextX;
+      if (copy.mirrorY) nextY = -nextY;
+
+      const rotatedX = nextX * copyCos - nextY * copySin;
+      const rotatedY = nextX * copySin + nextY * copyCos;
+
+      // Every rendered cell must have integer coordinates. The small epsilon
+      // avoids values such as -0.0000000001 becoming -1 after rounding.
+      return {
+        x: Math.round(rotatedX + Number.EPSILON),
+        y: Math.round(rotatedY + Number.EPSILON),
+      };
+    };
   };
 
   // debounced cell counting on shape renders
@@ -230,70 +277,43 @@ function App() {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-          <svg
-            data-layer-name="cells"
-            width={outputSize().width}
-            height={outputSize().height}
-            viewBox={`${camera().position.x * camera().zoom} ${camera().position.y * camera().zoom} ${camera().zoom * outputSize().width} ${camera().zoom * outputSize().height}`}
-          >
-            <For each={layers()}>
-              {(layer) => {
-                const masterRot = globalRotation();
-
-                return (
-                  <g>
-                    {/* Primary Shape */}
-                    <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
-                      {layer.shape.shapeComponent({ masterRotation: masterRot })}
-                    </g>
-                    
-                    {/* Horizontal Symmetry (Mirror across Y=0) */}
-                    <Show when={horizontalSymmetry()}>
-                      <g transform="scale(1, -1)">
-                        <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
-                          {layer.shape.shapeComponent({ masterRotation: masterRot })}
-                        </g>
-                      </g>
-                    </Show>
-
-                    {/* Vertical Symmetry (Mirror across X=0) */}
-                    <Show when={verticalSymmetry()}>
-                      <g transform="scale(-1, 1)">
-                        <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
-                          {layer.shape.shapeComponent({ masterRotation: masterRot })}
-                        </g>
-                      </g>
-                    </Show>
-
-                    {/* Both Symmetries */}
-                    <Show when={horizontalSymmetry() && verticalSymmetry()}>
-                      <g transform="scale(-1, -1)">
-                        <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
-                          {layer.shape.shapeComponent({ masterRotation: masterRot })}
-                        </g>
-                      </g>
-                    </Show>
-
-                    {/* Radial Symmetry */}
-                    <Show when={radialSymmetryCount() > 1}>
-                      <For each={Array.from({ length: radialSymmetryCount() - 1 })}>
-                        {(_, i) => {
-                          const radialAngle = (i() + 1) * (360 / radialSymmetryCount());
+        <svg
+          data-layer-name="cells"
+          width={outputSize().width}
+          height={outputSize().height}
+          viewBox={`${camera().position.x * camera().zoom} ${camera().position.y * camera().zoom} ${camera().zoom * outputSize().width} ${camera().zoom * outputSize().height}`}
+        >
+          <For each={layers()}>
+            {(layer) => {
+              return (
+                <g>
+                  <For each={radialCopies()}>
+                    {(radialIndex) => (
+                      <For each={symmetryCopies()}>
+                        {(symmetryCopy) => {
+                          const radialAngle =
+                            radialIndex * (360 / radialSymmetryCount());
                           return (
-                            <g transform={`rotate(${radialAngle})`}>
-                              <g transform={`translate(${layer.offset.x}, ${layer.offset.y})`}>
-                                {layer.shape.shapeComponent({ masterRotation: masterRot })}
-                              </g>
-                            </g>
+                            <CellTransformProvider
+                              transform={cellTransform(layer.offset, {
+                                ...symmetryCopy,
+                                angle: radialAngle,
+                              })}
+                            >
+                              {layer.shape.shapeComponent({
+                                masterRotation: 0,
+                              })}
+                            </CellTransformProvider>
                           );
                         }}
                       </For>
-                    </Show>
-                  </g>
-                );
-              }}
-            </For>
-          </svg>
+                    )}
+                  </For>
+                </g>
+              );
+            }}
+          </For>
+        </svg>
         <svg
           data-layer-name="grid"
           width={outputSize().width}
@@ -353,31 +373,117 @@ function App() {
         </span>
       </div>
       <div id="settings-container" aria-label="Shape Settings">
-        <div style={{ display: 'flex', 'flex-direction': 'column', gap: '1rem', 'margin-bottom': '1rem', padding: '1rem', border: '1px solid #ccc', 'border-radius': '8px' }}>
+        <div
+          style={{
+            display: 'flex',
+            'flex-direction': 'column',
+            gap: '1rem',
+            'margin-bottom': '1rem',
+            padding: '1rem',
+            border: '1px solid #ccc',
+            'border-radius': '8px',
+          }}
+        >
           <h3 style={{ margin: 0 }}>Global Settings</h3>
-          <Switch label="Show Grid" currentVal={showGrid} updateVal={setShowGrid} />
-          <div style={{ display: 'flex', 'flex-direction': 'column', gap: '0.5rem' }}>
+          <Switch
+            label="Show Grid"
+            currentVal={showGrid}
+            updateVal={setShowGrid}
+          />
+          <div
+            style={{
+              display: 'flex',
+              'flex-direction': 'column',
+              gap: '0.5rem',
+            }}
+          >
             <label style={{ 'font-weight': 'bold' }}>Symmetry</label>
-            <Switch label="Horizontal" currentVal={horizontalSymmetry} updateVal={setHorizontalSymmetry} />
-            <Switch label="Vertical" currentVal={verticalSymmetry} updateVal={setVerticalSymmetry} />
-            <Slider label="Radial Count" min={1} max={32} currentVal={radialSymmetryCount} updateVal={setRadialSymmetryCount} />
+            <Switch
+              label="Horizontal"
+              currentVal={horizontalSymmetry}
+              updateVal={setHorizontalSymmetry}
+            />
+            <Switch
+              label="Vertical"
+              currentVal={verticalSymmetry}
+              updateVal={setVerticalSymmetry}
+            />
+            <Slider
+              label="Radial Count"
+              min={1}
+              max={32}
+              currentVal={radialSymmetryCount}
+              updateVal={setRadialSymmetryCount}
+            />
           </div>
-          <Switch label="Sync All Rotation" currentVal={syncRotation} updateVal={setSyncRotation} />
-          <Slider label="Master Rotation" min={0} max={360} step={1} currentVal={globalRotation} updateVal={(val) => setGlobalRotation(val % 360)} />
+          <Switch
+            label="Sync All Rotation"
+            currentVal={syncRotation}
+            updateVal={setSyncRotation}
+          />
+          <Slider
+            label="Master Rotation"
+            min={0}
+            max={360}
+            step={1}
+            currentVal={globalRotation}
+            updateVal={(val: number) => setGlobalRotation(val % 360)}
+          />
         </div>
 
-        <div style={{ display: 'flex', 'flex-direction': 'column', gap: '1rem', 'margin-bottom': '1rem' }}>
-          <div style={{ display: 'flex', 'justify-content': 'space-between', 'align-items': 'center' }}>
+        <div
+          style={{
+            display: 'flex',
+            'flex-direction': 'column',
+            gap: '1rem',
+            'margin-bottom': '1rem',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              'justify-content': 'space-between',
+              'align-items': 'center',
+            }}
+          >
             <h3 style={{ margin: 0 }}>Layers</h3>
-            <button onClick={() => setLayers([...layers(), { id: Date.now(), shape: shapes[0], offset: { x: 0, y: 0 } }])}>+ Add Layer</button>
+            <button
+              onClick={() =>
+                setLayers([
+                  ...layers(),
+                  { id: Date.now(), shape: shapes[0], offset: { x: 0, y: 0 } },
+                ])
+              }
+            >
+              + Add Layer
+            </button>
           </div>
           <For each={layers()}>
             {(layer, index) => (
-              <div style={{ padding: '0.5rem', border: '1px solid #eee', 'border-radius': '4px' }}>
-                <div style={{ display: 'flex', 'justify-content': 'space-between', 'margin-bottom': '0.5rem' }}>
+              <div
+                style={{
+                  padding: '0.5rem',
+                  border: '1px solid #eee',
+                  'border-radius': '4px',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    'justify-content': 'space-between',
+                    'margin-bottom': '0.5rem',
+                  }}
+                >
                   <span>Layer {index() + 1}</span>
                   <Show when={layers().length > 1}>
-                    <button style={{ color: 'red' }} onClick={() => setLayers(layers().filter(l => l.id !== layer.id))}>Remove</button>
+                    <button
+                      style={{ color: 'red' }}
+                      onClick={() =>
+                        setLayers(layers().filter((l) => l.id !== layer.id))
+                      }
+                    >
+                      Remove
+                    </button>
                   </Show>
                 </div>
                 <Select
@@ -392,28 +498,41 @@ function App() {
                   extractOptionValue={(shape: Shape) => shape.name}
                   extractOptionLabel={(shape: Shape) => shape.name}
                 />
-                <div style={{ display: 'flex', 'flex-direction': 'column', gap: '0.5rem', 'margin-top': '0.5rem' }}>
-                  <Slider 
-                    label="Offset X" 
-                    min={-250} 
-                    max={250} 
-                    currentVal={() => layer.offset.x} 
-                    updateVal={(val) => {
+                <div
+                  style={{
+                    display: 'flex',
+                    'flex-direction': 'column',
+                    gap: '0.5rem',
+                    'margin-top': '0.5rem',
+                  }}
+                >
+                  <Slider
+                    label="Offset X"
+                    min={-250}
+                    max={250}
+                    currentVal={() => layer.offset.x}
+                    updateVal={(val: number) => {
                       const newLayers = [...layers()];
-                      newLayers[index()] = { ...layer, offset: { ...layer.offset, x: val } };
+                      newLayers[index()] = {
+                        ...layer,
+                        offset: { ...layer.offset, x: val },
+                      };
                       setLayers(newLayers);
-                    }} 
+                    }}
                   />
-                  <Slider 
-                    label="Offset Y" 
-                    min={-250} 
-                    max={250} 
-                    currentVal={() => layer.offset.y} 
-                    updateVal={(val) => {
+                  <Slider
+                    label="Offset Y"
+                    min={-250}
+                    max={250}
+                    currentVal={() => layer.offset.y}
+                    updateVal={(val: number) => {
                       const newLayers = [...layers()];
-                      newLayers[index()] = { ...layer, offset: { ...layer.offset, y: val } };
+                      newLayers[index()] = {
+                        ...layer,
+                        offset: { ...layer.offset, y: val },
+                      };
                       setLayers(newLayers);
-                    }} 
+                    }}
                   />
                   {layer.shape.settingsComponent({})}
                 </div>

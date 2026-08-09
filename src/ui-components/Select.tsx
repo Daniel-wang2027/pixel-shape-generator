@@ -1,11 +1,11 @@
 import { For } from 'solid-js';
-import type { Accessor, Setter } from 'solid-js';
+import type { Accessor } from 'solid-js';
 import './Select.css';
 
 const Select = (props: {
   label: string;
   selectedOption: Accessor<any>;
-  updateSelectedOption: Setter<any>;
+  updateSelectedOption: (option: any) => void;
   options: any[];
   extractOptionValue: (option: any) => string;
   extractOptionLabel: (option: any) => string;

@@ -1,4 +1,4 @@
-import type { JSX, Accessor, Setter } from 'solid-js';
+import type { JSX, Accessor } from 'solid-js';
 import './Slider.css';
 
 const Slider = ({
@@ -14,7 +14,7 @@ const Slider = ({
   max: number;
   step?: number;
   currentVal: Accessor<number>;
-  updateVal: Setter<number>;
+  updateVal: (value: number) => void;
 }) => {
   const handleInput: JSX.EventHandler<HTMLInputElement, InputEvent> = (
     event
@@ -24,7 +24,7 @@ const Slider = ({
       validity: { valid },
     } = event.currentTarget;
     if (!valid) return;
-    
+
     // Use requestAnimationFrame for smoother slider updates
     requestAnimationFrame(() => {
       updateVal(valueAsNumber);
