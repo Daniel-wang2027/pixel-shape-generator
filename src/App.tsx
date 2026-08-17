@@ -128,37 +128,31 @@ function App() {
   const radialCopies = () =>
     Array.from({ length: radialSymmetryCount() }, (_, index) => index);
 
-  // Transform the rasterized cells, not the SVG <rect> elements. SVG transforms
-  // rotate the one-unit squares themselves and leave their x/y attributes
-  // fractional, which makes radial copies drift off the pixel grid.
+  // Apply layer offset (rotated by radial angle) and symmetry mirroring.
+  // Geometry rotation is handled by shape components via masterRotation
+  // for pixel-perfect rasterization. The cellTransform only needs to rotate
+  // the layer offset so offset shapes orbit correctly around the center.
   const cellTransform = (
     offset: { x: number; y: number },
     copy: CopyTransform
   ) => {
-    const masterRadians =
-      ((syncRotation() ? globalRotation() : 0) * Math.PI) / 180;
-    const copyRadians = (copy.angle * Math.PI) / 180;
-    const masterCos = Math.cos(masterRadians);
-    const masterSin = Math.sin(masterRadians);
-    const copyCos = Math.cos(copyRadians);
-    const copySin = Math.sin(copyRadians);
+    // Rotate the offset by the radial angle so offset shapes orbit the center
+    const angleRad = (copy.angle * Math.PI) / 180;
+    const cosA = Math.cos(angleRad);
+    const sinA = Math.sin(angleRad);
+    const rotatedOffsetX = offset.x * cosA - offset.y * sinA;
+    const rotatedOffsetY = offset.x * sinA + offset.y * cosA;
 
     return ({ x, y }: { x: number; y: number }) => {
-      // The layer offset belongs to the shape before symmetry is applied.
-      let nextX = x * masterCos - y * masterSin + offset.x;
-      let nextY = x * masterSin + y * masterCos + offset.y;
+      let nextX = x + rotatedOffsetX;
+      let nextY = y + rotatedOffsetY;
 
       if (copy.mirrorX) nextX = -nextX;
       if (copy.mirrorY) nextY = -nextY;
 
-      const rotatedX = nextX * copyCos - nextY * copySin;
-      const rotatedY = nextX * copySin + nextY * copyCos;
-
-      // Every rendered cell must have integer coordinates. The small epsilon
-      // avoids values such as -0.0000000001 becoming -1 after rounding.
       return {
-        x: Math.round(rotatedX + Number.EPSILON),
-        y: Math.round(rotatedY + Number.EPSILON),
+        x: Math.round(nextX + Number.EPSILON),
+        y: Math.round(nextY + Number.EPSILON),
       };
     };
   };
@@ -287,12 +281,12 @@ function App() {
             {(layer) => {
               return (
                 <g>
-                  <For each={radialCopies()}>
-                    {(radialIndex) => (
+                  {radialCopies().map((radialIndex) => {
+                    const radialAngle =
+                      radialIndex * (360 / radialSymmetryCount());
+                    return (
                       <For each={symmetryCopies()}>
                         {(symmetryCopy) => {
-                          const radialAngle =
-                            radialIndex * (360 / radialSymmetryCount());
                           return (
                             <CellTransformProvider
                               transform={cellTransform(layer.offset, {
@@ -301,14 +295,16 @@ function App() {
                               })}
                             >
                               {layer.shape.shapeComponent({
-                                masterRotation: 0,
+                                masterRotation:
+                                  (syncRotation() ? globalRotation() : 0) +
+                                  radialAngle,
                               })}
                             </CellTransformProvider>
                           );
                         }}
                       </For>
-                    )}
-                  </For>
+                    );
+                  })}
                 </g>
               );
             }}
