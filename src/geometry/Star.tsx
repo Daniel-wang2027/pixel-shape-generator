@@ -1,108 +1,114 @@
 import { createSignal, For, Show, JSX } from 'solid-js';
-import type { Shape } from '../types.d.ts';
+import type { ShapeFactory, ShapeInstance } from '../types.d.ts';
 import CellLine from './helpers/CellLine.tsx';
 import CellCircle from './helpers/CellCircle.tsx';
 import Slider from '../ui-components/Slider.tsx';
 import Switch from '../ui-components/Switch.tsx';
 
-const [vertices, setVertices] = createSignal(5);
-const [diameter1, setDiameter1] = createSignal(20);
-const [diameter2, setDiameter2] = createSignal(40);
-const [rotation, setRotation] = createSignal(72);
-const [showBounds, setShowBounds] = createSignal(false);
-const [showDrawGuide, setShowDrawGuide] = createSignal(false);
+function createStar(): ShapeInstance {
+  const [vertices, setVertices] = createSignal(5);
+  const [diameter1, setDiameter1] = createSignal(20);
+  const [diameter2, setDiameter2] = createSignal(40);
+  const [rotation, setRotation] = createSignal(72);
+  const [showBounds, setShowBounds] = createSignal(false);
+  const [showDrawGuide, setShowDrawGuide] = createSignal(false);
 
-const calculateVertex = (i: number, masterRotation: number): { x: number; y: number } => {
-  const d = i % 2 == 0 ? diameter1() : diameter2();
-  const radius = (d - 1) / 2;
-  const angle =
-    (i * 2 * Math.PI) / vertices() / 2 + ((rotation() + masterRotation) * Math.PI) / 180;
-  return {
-    x: radius * Math.cos(angle),
-    y: radius * Math.sin(angle),
+  const calculateVertex = (i: number, masterRotation: number): { x: number; y: number } => {
+    const d = i % 2 == 0 ? diameter1() : diameter2();
+    const radius = (d - 1) / 2;
+    const angle =
+      (i * 2 * Math.PI) / vertices() / 2 + ((rotation() + masterRotation) * Math.PI) / 180;
+    return {
+      x: radius * Math.cos(angle),
+      y: radius * Math.sin(angle),
+    };
   };
-};
 
-const ShapeComponent = (props: { masterRotation?: number }): JSX.Element => {
-  const mRot = () => props.masterRotation || 0;
-  const verts = Array.from({ length: vertices() * 2 }, (_, i) =>
-    calculateVertex(i, mRot())
-  );
-  return (
-    <>
-      <Show when={showBounds()}>
-        <CellCircle x={0} y={0} diameter={diameter1()} debug />
-        <CellCircle x={0} y={0} diameter={diameter2()} debug />
-      </Show>
-      <For each={verts}>
-        {(_, i) => (
-          <CellLine
-            x1={verts[i()].x}
-            y1={verts[i()].y}
-            x2={verts[(i() + 1) % (vertices() * 2)].x}
-            y2={verts[(i() + 1) % (vertices() * 2)].y}
+  const ShapeComponent = (props: { masterRotation?: number }): JSX.Element => {
+    const mRot = () => props.masterRotation || 0;
+    const verts = Array.from({ length: vertices() * 2 }, (_, i) =>
+      calculateVertex(i, mRot())
+    );
+    return (
+      <>
+        <Show when={showBounds()}>
+          <CellCircle x={0} y={0} diameter={diameter1()} debug />
+          <CellCircle x={0} y={0} diameter={diameter2()} debug />
+        </Show>
+        <For each={verts}>
+          {(_, i) => (
+            <CellLine
+              x1={verts[i()].x}
+              y1={verts[i()].y}
+              x2={verts[(i() + 1) % (vertices() * 2)].x}
+              y2={verts[(i() + 1) % (vertices() * 2)].y}
+            />
+          )}
+        </For>
+        <Show when={showDrawGuide()}>
+          <polygon
+            points={verts.map(({ x, y }) => `${x + 0.5},${y + 0.5}`).join(' ')}
+            class="draw-guide"
           />
-        )}
-      </For>
-      <Show when={showDrawGuide()}>
-        <polygon
-          points={verts.map(({ x, y }) => `${x + 0.5},${y + 0.5}`).join(' ')}
-          class="draw-guide"
+        </Show>
+      </>
+    );
+  };
+
+  const SettingsComponent = (): JSX.Element => {
+    return (
+      <>
+        <Slider
+          label="Vertices"
+          min={3}
+          max={16}
+          currentVal={vertices}
+          updateVal={setVertices}
         />
-      </Show>
-    </>
-  );
-};
+        <Slider
+          label="Diameter 1"
+          min={0}
+          max={500}
+          currentVal={diameter1}
+          updateVal={setDiameter1}
+        />
+        <Slider
+          label="Diameter 2"
+          min={0}
+          max={500}
+          currentVal={diameter2}
+          updateVal={setDiameter2}
+        />
+        <Slider
+          label="Rotation"
+          min={0}
+          max={360}
+          currentVal={rotation}
+          updateVal={setRotation}
+        />
+        <Switch
+          label="Show Bounds"
+          currentVal={showBounds}
+          updateVal={setShowBounds}
+        />
+        <Switch
+          label="Show Draw Guide"
+          currentVal={showDrawGuide}
+          updateVal={setShowDrawGuide}
+        />
+      </>
+    );
+  };
 
-const SettingsComponent = (): JSX.Element => {
-  return (
-    <>
-      <Slider
-        label="Vertices"
-        min={3}
-        max={16}
-        currentVal={vertices}
-        updateVal={setVertices}
-      />
-      <Slider
-        label="Diameter 1"
-        min={0}
-        max={500}
-        currentVal={diameter1}
-        updateVal={setDiameter1}
-      />
-      <Slider
-        label="Diameter 2"
-        min={0}
-        max={500}
-        currentVal={diameter2}
-        updateVal={setDiameter2}
-      />
-      <Slider
-        label="Rotation"
-        min={0}
-        max={360}
-        currentVal={rotation}
-        updateVal={setRotation}
-      />
-      <Switch
-        label="Show Bounds"
-        currentVal={showBounds}
-        updateVal={setShowBounds}
-      />
-      <Switch
-        label="Show Draw Guide"
-        currentVal={showDrawGuide}
-        updateVal={setShowDrawGuide}
-      />
-    </>
-  );
-};
+  return {
+    shapeComponent: ShapeComponent,
+    settingsComponent: SettingsComponent,
+  };
+}
 
-const Star: Shape = {
-  shapeComponent: ShapeComponent,
-  settingsComponent: SettingsComponent,
+const Star: ShapeFactory = {
   name: 'Star',
+  createInstance: createStar,
 };
 
 export default Star;

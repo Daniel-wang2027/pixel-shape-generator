@@ -1,116 +1,498 @@
-:root {
-  --backdrop-color: #fff;
-  --cell-color: #5cceee;
-  --cell-highlight-color: #a33111;
-  --cell-debug-color: #eee75c;
-  --cell-debug-highlight-color: #ea7b21;
-  --draw-guide: #ff0000;
-  --grid-line-color: #d4d4d4;
-  --text-color: #000;
-  --ui-background-color: #fdfdfd;
-  --ui-hover-color: #f8f4f4;
-  --ui-border-color: #d1d5db;
-  --ui-void-color: #d0d4de;
-  --github-mark: url('/github-mark.svg');
-  --ui-border-radius: 8px;
+/* ═══════════════════════════════════════════════════════════════════
+   PIXEL SHAPE GENERATOR — Studio Design System & Multi-Theme Engine
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── 1. Default Theme: Ember Gold (Dark Fantasy Gold-on-Dark) ───── */
+:root, :root[data-theme="ember"] {
+  --bg-deep:        hsl(27, 24%, 7%);
+  --bg-card:        hsl(32, 28%, 9%);
+  --bg-surface:     hsl(33, 32%, 11%);
+  --bg-accent:      hsl(35, 33%, 13%);
+  --bg-hover:       hsl(37, 39%, 13%);
+  --bg-sidebar:     hsl(30, 31%, 5%);
+  --bg-overlay:     rgba(14, 10, 6, 0.72);
+  --bg-input:       hsl(33, 21%, 12%);
+
+  --text-primary:   hsl(41, 42%, 85%);
+  --text-secondary: hsl(40, 25%, 62%);
+  --text-muted:     hsl(38, 20%, 46%);
+  --text-faint:     hsl(36, 20%, 35%);
+  --text-ink:       hsl(42, 54%, 89%);
+
+  --gold:           hsl(41, 54%, 54%);
+  --gold-bright:    hsl(42, 66%, 74%);
+  --gold-cta:       hsl(41, 62%, 61%);
+  --gold-deep:      hsl(42, 60%, 38%);
+  --gold-10:        hsla(41, 54%, 54%, 0.10);
+  --gold-15:        hsla(41, 54%, 54%, 0.15);
+  --gold-20:        hsla(41, 54%, 54%, 0.20);
+  --gold-30:        hsla(41, 54%, 54%, 0.30);
+  --gold-50:        hsla(41, 54%, 54%, 0.50);
+
+  --border:         hsl(33, 21%, 19%);
+  --border-subtle:  hsla(33, 21%, 19%, 0.5);
+  --border-gold:    hsla(41, 54%, 54%, 0.25);
+
+  --cell-color:     hsl(41, 66%, 62%);
+  --cell-highlight: hsl(15, 80%, 55%);
+  --cell-debug:     hsl(45, 90%, 65%);
+  --draw-guide:     hsl(0, 80%, 60%);
+  --grid-line-color:hsla(41, 30%, 30%, 0.25);
+
+  --shadow-card:    0 10px 30px -14px rgba(0, 0, 0, 0.6);
+  --shadow-glow:    0 0 20px -4px rgba(201, 162, 75, 0.2);
+  --shadow-dropdown:0 12px 40px -8px rgba(0, 0, 0, 0.7);
+
+  --radius-sm:      4px;
+  --radius-md:      6px;
+  --radius-lg:      8px;
+  --radius-xl:      12px;
+
+  --ease-out:       cubic-bezier(0.16, 1, 0.3, 1);
+  --duration:       180ms;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --backdrop-color: rgb(9 9 11);
-    --cell-color: #1186a6;
-    --cell-highlight-color: #942c10;
-    --cell-debug-color: #8e8e0e;
-    --cell-debug-highlight-color: #875310;
-    --draw-guide: #ff0000;
-    --grid-line-color: #2f2f2f;
-    --text-color: #dadada;
-    --ui-background-color: rgb(24 24 27);
-    --ui-hover-color: #2a2a2f;
-    --ui-border-color: #606060;
-    --ui-void-color: #4e4e4e;
-    --github-mark: url('/github-mark-white.svg');
-  }
+/* ── 2. Ink (Light Warm Parchment) ─────────────────────────────────── */
+:root[data-theme="ink"] {
+  --bg-deep:        hsl(43, 52%, 87%);
+  --bg-card:        hsl(44, 65%, 92%);
+  --bg-surface:     hsl(44, 59%, 88%);
+  --bg-accent:      hsl(42, 53%, 87%);
+  --bg-hover:       hsl(43, 45%, 82%);
+  --bg-sidebar:     hsl(43, 49%, 82%);
+  --bg-overlay:     rgba(243, 235, 214, 0.96);
+  --bg-input:       hsl(44, 65%, 94%);
+
+  --text-primary:   hsl(38, 36%, 18%);
+  --text-secondary: hsl(38, 24%, 34%);
+  --text-muted:     hsl(38, 20%, 42%);
+  --text-faint:     hsl(38, 18%, 55%);
+  --text-ink:       hsl(35, 41%, 11%);
+
+  --gold:           hsl(42, 60%, 38%);
+  --gold-bright:    hsl(42, 62%, 30%);
+  --gold-cta:       hsl(42, 58%, 44%);
+  --gold-deep:      hsl(42, 60%, 38%);
+  --gold-10:        hsla(42, 60%, 38%, 0.10);
+  --gold-15:        hsla(42, 60%, 38%, 0.15);
+  --gold-20:        hsla(42, 60%, 38%, 0.20);
+  --gold-30:        hsla(42, 60%, 38%, 0.30);
+  --gold-50:        hsla(42, 60%, 38%, 0.50);
+
+  --border:         hsl(43, 41%, 74%);
+  --border-subtle:  hsla(43, 41%, 74%, 0.5);
+  --border-gold:    hsla(42, 60%, 38%, 0.25);
+
+  --cell-color:     hsl(35, 65%, 38%);
+  --cell-highlight: hsl(10, 75%, 45%);
+  --cell-debug:     hsl(45, 80%, 40%);
+  --draw-guide:     hsl(0, 70%, 45%);
+  --grid-line-color:hsla(38, 25%, 50%, 0.25);
+
+  --shadow-card:    0 6px 18px -8px rgba(96, 74, 30, 0.25);
+  --shadow-glow:    0 0 20px -4px rgba(96, 74, 30, 0.10);
 }
 
-#repo-link {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 32px;
-  height: 32px;
-  margin: 16px;
-  background-size: 32px;
-  background-image: var(--github-mark);
-  background-repeat: no-repeat;
-  border-radius: 50%;
-  text-indent: -99999px;
+/* ── 3. Cyberpunk (Neon Magenta & Cyan) ────────────────────────────── */
+:root[data-theme="cyberpunk"] {
+  --bg-deep:        #06060c;
+  --bg-card:        rgba(14, 10, 22, 0.94);
+  --bg-surface:     rgba(20, 12, 32, 0.90);
+  --bg-accent:      rgba(35, 15, 50, 0.85);
+  --bg-hover:       rgba(55, 20, 75, 0.75);
+  --bg-sidebar:     rgba(8, 4, 14, 0.96);
+  --bg-overlay:     rgba(8, 4, 14, 0.94);
+  --bg-input:       rgba(20, 12, 32, 0.85);
+
+  --text-primary:   #d8d8e8;
+  --text-secondary: #a0a0c0;
+  --text-muted:     #7878a0;
+  --text-faint:     #555577;
+  --text-ink:       #ffffff;
+
+  --gold:           #f000ff;
+  --gold-bright:    #ff66ff;
+  --gold-cta:       #00ffcc;
+  --gold-deep:      #cc00dd;
+  --gold-10:        rgba(240, 0, 255, 0.12);
+  --gold-15:        rgba(240, 0, 255, 0.18);
+  --gold-20:        rgba(240, 0, 255, 0.25);
+  --gold-30:        rgba(240, 0, 255, 0.35);
+  --gold-50:        rgba(240, 0, 255, 0.55);
+
+  --border:         #7b1fa2;
+  --border-subtle:  rgba(240, 0, 255, 0.3);
+  --border-gold:    rgba(240, 0, 255, 0.4);
+
+  --cell-color:     #00ffcc;
+  --cell-highlight: #ff0077;
+  --cell-debug:     #f000ff;
+  --draw-guide:     #ffff00;
+  --grid-line-color:rgba(0, 255, 204, 0.15);
+
+  --shadow-card:    0 0 15px rgba(240, 0, 255, 0.25);
+  --shadow-glow:    0 0 20px -4px rgba(0, 255, 204, 0.4);
 }
 
-span,
-label,
-p {
-  color: var(--text-color);
+/* ── 4. Space (Starry Void & Sky Blue) ────────────────────────────── */
+:root[data-theme="space"] {
+  --bg-deep:        #050511;
+  --bg-card:        #0f1221;
+  --bg-surface:     #13172c;
+  --bg-accent:      #1e293b;
+  --bg-hover:       #243048;
+  --bg-sidebar:     #080916;
+  --bg-overlay:     rgba(5, 5, 17, 0.85);
+  --bg-input:       #0f1221;
+
+  --text-primary:   #cbd5e1;
+  --text-secondary: #94a3b8;
+  --text-muted:     #64748b;
+  --text-faint:     #475569;
+  --text-ink:       #e2e8f0;
+
+  --gold:           #38bdf8;
+  --gold-bright:    #7dd3fc;
+  --gold-cta:       #38bdf8;
+  --gold-deep:      #0284c7;
+  --gold-10:        rgba(56, 189, 248, 0.10);
+  --gold-15:        rgba(56, 189, 248, 0.15);
+  --gold-20:        rgba(56, 189, 248, 0.20);
+  --gold-30:        rgba(56, 189, 248, 0.30);
+  --gold-50:        rgba(56, 189, 248, 0.50);
+
+  --border:         #1e293b;
+  --border-subtle:  rgba(30, 41, 59, 0.5);
+  --border-gold:    rgba(56, 189, 248, 0.25);
+
+  --cell-color:     #38bdf8;
+  --cell-highlight: #f43f5e;
+  --cell-debug:     #a855f7;
+  --draw-guide:     #f59e0b;
+  --grid-line-color:rgba(56, 189, 248, 0.15);
+
+  --shadow-card:    0 10px 30px -14px rgba(0, 0, 0, 0.6);
+  --shadow-glow:    0 0 20px -4px rgba(56, 189, 248, 0.25);
 }
 
-html {
-  width: 100%;
-  height: 100%;
-  font-family: system-ui, sans-serif;
+/* ── 5. Terminal (Matrix CRT Green) ────────────────────────────────── */
+:root[data-theme="terminal"] {
+  --bg-deep:        #050c05;
+  --bg-card:        #0a140a;
+  --bg-surface:     #0d1a0d;
+  --bg-accent:      #122412;
+  --bg-hover:       #1a331a;
+  --bg-sidebar:     #040804;
+  --bg-overlay:     rgba(6, 10, 6, 0.94);
+  --bg-input:       #0a140a;
+
+  --text-primary:   #4ade80;
+  --text-secondary: #22c55e;
+  --text-muted:     #16a34a;
+  --text-faint:     #15803d;
+  --text-ink:       #86efac;
+
+  --gold:           #22c55e;
+  --gold-bright:    #4ade80;
+  --gold-cta:       #22c55e;
+  --gold-deep:      #16a34a;
+  --gold-10:        rgba(34, 197, 94, 0.10);
+  --gold-15:        rgba(34, 197, 94, 0.15);
+  --gold-20:        rgba(34, 197, 94, 0.20);
+  --gold-30:        rgba(34, 197, 94, 0.30);
+  --gold-50:        rgba(34, 197, 94, 0.50);
+
+  --border:         #166534;
+  --border-subtle:  rgba(34, 197, 94, 0.3);
+  --border-gold:    rgba(34, 197, 94, 0.4);
+
+  --cell-color:     #22c55e;
+  --cell-highlight: #ef4444;
+  --cell-debug:     #eab308;
+  --draw-guide:     #a855f7;
+  --grid-line-color:rgba(34, 197, 94, 0.18);
+
+  --shadow-card:    none;
+  --shadow-glow:    0 0 15px -2px rgba(34, 197, 94, 0.35);
 }
 
-body {
-  width: 100%;
-  height: 100%;
+/* ── 6. Blueprint (Drafting Navy & Cyan) ───────────────────────────── */
+:root[data-theme="blueprint"] {
+  --bg-deep:        #0f172a;
+  --bg-card:        rgba(23, 37, 84, 0.88);
+  --bg-surface:     rgba(30, 58, 138, 0.75);
+  --bg-accent:      rgba(29, 78, 216, 0.65);
+  --bg-hover:       rgba(29, 78, 216, 0.55);
+  --bg-sidebar:     rgba(15, 23, 42, 0.95);
+  --bg-overlay:     rgba(15, 23, 42, 0.92);
+  --bg-input:       rgba(23, 37, 84, 0.8);
+
+  --text-primary:   #bfdbfe;
+  --text-secondary: #93c5fd;
+  --text-muted:     #60a5fa;
+  --text-faint:     #3b82f6;
+  --text-ink:       #ffffff;
+
+  --gold:           #60a5fa;
+  --gold-bright:    #93c5fd;
+  --gold-cta:       #38bdf8;
+  --gold-deep:      #2563eb;
+  --gold-10:        rgba(96, 165, 250, 0.10);
+  --gold-15:        rgba(96, 165, 250, 0.15);
+  --gold-20:        rgba(96, 165, 250, 0.20);
+  --gold-30:        rgba(96, 165, 250, 0.30);
+  --gold-50:        rgba(96, 165, 250, 0.50);
+
+  --border:         rgba(255,255,255,0.22);
+  --border-subtle:  rgba(255,255,255,0.12);
+  --border-gold:    rgba(96, 165, 250, 0.35);
+
+  --cell-color:     #60a5fa;
+  --cell-highlight: #f87171;
+  --cell-debug:     #fbbf24;
+  --draw-guide:     #f43f5e;
+  --grid-line-color:rgba(255, 255, 255, 0.18);
+
+  --shadow-card:    0 10px 30px -14px rgba(0, 0, 0, 0.4);
+  --shadow-glow:    0 0 20px -4px rgba(96, 165, 250, 0.25);
+}
+
+/* ── 7. Frutiger Aero (Glossy Sky Blue) ────────────────────────────── */
+:root[data-theme="frutiger"] {
+  --bg-deep:        #7ac5e8;
+  --bg-card:        rgba(255, 255, 255, 0.78);
+  --bg-surface:     rgba(255, 255, 255, 0.62);
+  --bg-accent:      rgba(255, 255, 255, 0.75);
+  --bg-hover:       rgba(255, 255, 255, 0.90);
+  --bg-sidebar:     rgba(255, 255, 255, 0.72);
+  --bg-overlay:     rgba(255, 255, 255, 0.85);
+  --bg-input:       rgba(255, 255, 255, 0.85);
+
+  --text-primary:   #1e293b;
+  --text-secondary: #334155;
+  --text-muted:     #475569;
+  --text-faint:     #64748b;
+  --text-ink:       #0f172a;
+
+  --gold:           #0284c7;
+  --gold-bright:    #0369a1;
+  --gold-cta:       #0284c7;
+  --gold-deep:      #075985;
+  --gold-10:        rgba(2, 132, 199, 0.10);
+  --gold-15:        rgba(2, 132, 199, 0.15);
+  --gold-20:        rgba(2, 132, 199, 0.20);
+  --gold-30:        rgba(2, 132, 199, 0.30);
+  --gold-50:        rgba(2, 132, 199, 0.50);
+
+  --border:         rgba(255, 255, 255, 0.95);
+  --border-subtle:  rgba(255, 255, 255, 0.6);
+  --border-gold:    rgba(2, 132, 199, 0.3);
+
+  --cell-color:     #0284c7;
+  --cell-highlight: #e11d48;
+  --cell-debug:     #ca8a04;
+  --draw-guide:     #e11d48;
+  --grid-line-color:rgba(2, 132, 199, 0.2);
+
+  --shadow-card:    0 8px 24px -8px rgba(0, 80, 140, 0.2);
+  --shadow-glow:    0 0 20px -4px rgba(2, 132, 199, 0.25);
+}
+
+/* ── 8. Legacy Classic (Original 2024 Pixel Tool Look) ─────────────── */
+:root[data-theme="legacy"] {
+  --bg-deep:        #09090b;
+  --bg-card:        rgb(24, 24, 27);
+  --bg-surface:     rgb(24, 24, 27);
+  --bg-accent:      #2a2a2f;
+  --bg-hover:       #2a2a2f;
+  --bg-sidebar:     rgb(24, 24, 27);
+  --bg-overlay:     rgba(0, 0, 0, 0.8);
+  --bg-input:       rgb(24, 24, 27);
+
+  --text-primary:   #dadada;
+  --text-secondary: #a0a0a0;
+  --text-muted:     #808080;
+  --text-faint:     #606060;
+  --text-ink:       #ffffff;
+
+  --gold:           #1186a6;
+  --gold-bright:    #5cceee;
+  --gold-cta:       #1186a6;
+  --gold-deep:      #0b566b;
+  --gold-10:        rgba(92, 206, 238, 0.10);
+  --gold-15:        rgba(92, 206, 238, 0.15);
+  --gold-20:        rgba(92, 206, 238, 0.20);
+  --gold-30:        rgba(92, 206, 238, 0.30);
+  --gold-50:        rgba(92, 206, 238, 0.50);
+
+  --border:         #606060;
+  --border-subtle:  #4e4e4e;
+  --border-gold:    #5cceee;
+
+  --cell-color:     #1186a6;
+  --cell-highlight: #942c10;
+  --cell-debug:     #8e8e0e;
+  --draw-guide:     #ff0000;
+  --grid-line-color:#2f2f2f;
+
+  --shadow-card:    none;
+  --shadow-glow:    none;
+}
+
+/* ── Base Setup ──────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
   margin: 0;
-  background-color: var(--backdrop-color);
-  scrollbar-color: var(--ui-void-color) var(--ui-background-color);
+  padding: 0;
 }
 
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--bg-deep);
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Header typography */
+h1, h2, h3, .brand-title {
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text-ink);
+}
+
+:root[data-theme="terminal"] h1,
+:root[data-theme="terminal"] h2,
+:root[data-theme="terminal"] h3,
+:root[data-theme="terminal"] .brand-title,
+:root[data-theme="terminal"] body {
+  font-family: 'Roboto Mono', monospace !important;
+}
+
+/* ── App Layout ──────────────────────────────────────────────────── */
 #root {
   display: flex;
-  width: 100%;
-  height: 100%;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
 }
 
+/* ── Top Header Navigation Bar ───────────────────────────────────── */
+.studio-header {
+  height: 54px;
+  background: var(--bg-sidebar);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.25rem;
+  flex-shrink: 0;
+  z-index: 50;
+  gap: 1rem;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.brand-icon {
+  width: 26px;
+  height: 26px;
+  color: var(--gold);
+  filter: drop-shadow(0 0 8px var(--gold-30));
+}
+
+.brand-title {
+  font-size: 1rem;
+  color: var(--gold-bright);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  white-space: nowrap;
+}
+
+.cell-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--gold-10);
+  border: 1px solid var(--border-gold);
+  color: var(--gold-bright);
+  padding: 0.25rem 0.65rem;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-family: 'Roboto Mono', monospace;
+}
+
+.cell-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 6px var(--gold);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+/* ── Main Workspace Body ─────────────────────────────────────────── */
+.studio-workspace {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+
+/* ── Canvas Viewport ─────────────────────────────────────────────── */
 #output-container {
   position: relative;
-  box-sizing: border-box;
-  margin: 16px;
-  border: 1px solid var(--ui-border-color);
-  border-radius: var(--ui-border-radius);
+  flex: 1;
+  height: 100%;
+  background-color: var(--bg-surface);
   overflow: hidden;
-  background-color: var(--ui-background-color);
   user-select: none;
+  cursor: grab;
+}
+
+#output-container:active {
+  cursor: grabbing;
 }
 
 #output-container > svg {
   position: absolute;
+  top: 0;
+  left: 0;
 }
 
 #output-container > svg:not([data-layer-name='cells']) {
   pointer-events: none;
 }
 
+/* Pixel styling */
 .cell {
   fill: var(--cell-color);
+  transition: fill var(--duration) ease;
 }
 
 .cell.debug {
-  fill: var(--cell-debug-color);
+  fill: var(--cell-debug);
 }
 
 rect.highlighted {
-  fill: var(--cell-highlight-color);
-}
-
-.cell.debug.highlighted {
-  fill: var(--cell-debug-highlight-color);
+  fill: var(--cell-highlight);
 }
 
 .draw-guide {
   stroke: var(--draw-guide);
-  stroke-width: 0.1;
+  stroke-width: 0.12;
   fill: none;
   pointer-events: none;
 }
@@ -119,138 +501,358 @@ rect.highlighted {
   stroke: var(--grid-line-color);
 }
 
-#scale {
+/* ── Viewport Floating HUD ───────────────────────────────────────── */
+.viewport-hud-coords {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  margin: 4px;
-  line-height: 16px;
-  font-size: 16px;
+  top: 14px;
+  left: 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-md);
+  font-family: 'Roboto Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
   pointer-events: none;
-  transition: opacity 0.2s;
+  box-shadow: var(--shadow-card);
 }
 
-button:hover {
-  touch-action: manipulation;
-  background-color: var(--ui-hover-color);
+.viewport-hud-scale {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-md);
+  font-family: 'Roboto Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  pointer-events: none;
 }
 
-button {
-  width: fit-content;
-  padding: 10px;
-  border: 1px solid var(--ui-border-color);
-  border-radius: var(--ui-border-radius);
-  background-color: var(--ui-background-color);
-  color: var(--text-color);
-  font-size: 16px;
-  cursor: pointer;
-}
-
+/* ── Floating Zoom / Camera Dock ─────────────────────────────────── */
 #zoom-controls {
   display: flex;
   flex-direction: column;
   position: absolute;
-  bottom: 0;
-  right: 0;
-  margin: 16px;
+  bottom: 14px;
+  right: 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  z-index: 20;
 }
 
 #zoom-controls > button {
-  margin: 0;
-  padding: 4px 10px;
-  border: 1px solid var(--ui-border-color);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all var(--duration) var(--ease-out);
+  padding: 0;
   border-radius: 0;
-  font-size: 24px;
-  color: var(--text-color);
-}
-
-#zoom-controls > button:first-child {
-  border-bottom-width: 0;
-  border-radius: var(--ui-border-radius) var(--ui-border-radius) 0 0;
 }
 
 #zoom-controls > button:last-child {
-  border-radius: 0 0 var(--ui-border-radius) var(--ui-border-radius);
+  border-bottom: none;
 }
 
-#pointer-coords {
-  position: absolute;
-  top: 0;
-  left: 0;
-  margin: 4px;
-  line-height: 16px;
-  font-size: 16px;
-  pointer-events: none;
+#zoom-controls > button:hover:not(:disabled) {
+  background: var(--gold-15);
+  color: var(--gold-bright);
 }
 
-#cell-count {
-  position: absolute;
-  top: 0;
-  right: 0;
-  margin: 4px;
-  line-height: 16px;
-  font-size: 16px;
-  pointer-events: none;
-  transition: opacity 0.2s;
+#zoom-controls > button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
 }
 
+/* ── Right Studio Deck (Settings Sidebar) ────────────────────────── */
 #settings-container {
+  width: 380px;
+  background: var(--bg-sidebar);
+  border-left: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  flex: 1;
-  gap: 16px;
-  position: relative;
-  padding: 16px;
   overflow-y: auto;
-  overscroll-behavior: contain;
+  overflow-x: hidden;
+  flex-shrink: 0;
+  z-index: 30;
+  padding: 1.25rem;
+  gap: 1.25rem;
 }
 
-.button-group > button {
-  border-radius: 0;
-  border-width: 1px 1px 1px 0;
+/* Tab selector */
+.deck-tabs {
+  display: flex;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 2px;
+  gap: 2px;
 }
 
-.button-group > button:last-child {
-  border-radius: 0 var(--ui-border-radius) var(--ui-border-radius) 0;
-  border-right-width: 1px;
+.deck-tab-btn {
+  flex: 1;
+  padding: 0.45rem 0.75rem;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all var(--duration) var(--ease-out);
+  font-family: inherit;
 }
 
-.button-group > span {
-  background-color: var(--ui-void-color);
-  padding: 10px;
-  border: 1px solid var(--ui-border-color);
-  border-radius: var(--ui-border-radius) 0 0 var(--ui-border-radius);
+.deck-tab-btn:hover {
+  color: var(--text-primary);
+}
+
+.deck-tab-btn.active {
+  background: var(--gold);
+  color: var(--bg-deep);
+  box-shadow: var(--shadow-glow);
+}
+
+/* Card sections */
+.studio-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  box-shadow: var(--shadow-card);
+  transition: border-color var(--duration) ease;
+}
+
+.studio-card:hover {
+  border-color: var(--border-gold);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.card-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--gold-bright);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Layer Deck Cards */
+.layer-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: all var(--duration) var(--ease-out);
+}
+
+.layer-card.hidden-layer {
+  opacity: 0.55;
+  border-style: dashed;
+}
+
+.layer-card:hover {
+  border-color: var(--border-gold);
+}
+
+.layer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.layer-num {
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--gold-bright);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.layer-actions {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.btn-icon-sm {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all var(--duration) var(--ease-out);
+}
+
+.btn-icon-sm:hover {
+  background: var(--gold-15);
+  color: var(--gold-bright);
+  border-color: var(--border-gold);
+}
+
+.btn-icon-sm.danger:hover {
+  background: rgba(220, 38, 38, 0.2);
+  color: #f87171;
+  border-color: rgba(220, 38, 38, 0.4);
+}
+
+/* Primary Button */
+.btn-primary {
+  width: 100%;
+  padding: 0.65rem 1rem;
+  background: var(--gold);
+  color: var(--bg-deep);
+  border: 1px solid var(--gold);
+  border-radius: var(--radius-md);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all var(--duration) var(--ease-out);
+}
+
+.btn-primary:hover {
+  background: var(--gold-cta);
+  border-color: var(--gold-cta);
+  box-shadow: var(--shadow-glow);
+}
+
+/* Button groups for download/copy */
+.hub-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.hub-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
 }
 
 .button-group {
   display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  width: min-content;
-  padding: 0;
+  width: 100%;
 }
 
-@media (orientation: landscape) {
-  #root {
-    flex-direction: row;
-  }
-  #output-container {
-    flex: 2;
-    max-width: 60%;
-    margin-right: 0;
-  }
+.button-group > span {
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+  display: flex;
+  align-items: center;
 }
 
-@media (orientation: portrait) {
-  #root {
+.button-group > button {
+  flex: 1;
+  padding: 0.5rem 0.6rem;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-left: none;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--duration) var(--ease-out);
+  border-radius: 0;
+}
+
+.button-group > button:last-child {
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+
+.button-group > button:hover {
+  background: var(--gold-15);
+  color: var(--gold-bright);
+  border-color: var(--border-gold);
+}
+
+/* Toast Notifications */
+.toast-notice {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(0);
+  background: var(--bg-card);
+  border: 1px solid var(--gold);
+  box-shadow: var(--shadow-glow), 0 12px 30px rgba(0, 0, 0, 0.7);
+  color: var(--gold-bright);
+  padding: 0.6rem 1.2rem;
+  border-radius: 99px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  z-index: 100;
+  animation: toastFade 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+@keyframes toastFade {
+  from { opacity: 0; transform: translateX(-50%) translateY(12px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* ── Mobile Responsive ───────────────────────────────────────────── */
+@media (max-width: 860px) {
+  .studio-workspace {
     flex-direction: column;
   }
   #output-container {
+    height: 50vh;
+    flex: none;
+  }
+  #settings-container {
     width: 100%;
-    aspect-ratio: 1;
-    max-height: 60%;
-    margin: 0;
-    border-width: 1px 0 1px 0;
-    border-radius: 0;
+    flex: 1;
+    border-left: none;
+    border-top: 1px solid var(--border);
   }
 }

@@ -1,10 +1,10 @@
-import type { JSX, Accessor, Setter } from 'solid-js';
+import type { JSX, Accessor } from 'solid-js';
 import './Switch.css';
 
 const Switch = (props: {
   label: string;
   currentVal: Accessor<boolean>;
-  updateVal: Setter<boolean>;
+  updateVal: (val: boolean) => void;
 }) => {
   const handleInput: JSX.EventHandler<HTMLInputElement, InputEvent> = (
     event

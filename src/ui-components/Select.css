@@ -1,53 +1,59 @@
 .select-container {
   position: relative;
-  align-self: flex-start;
-  border: 1px solid var(--ui-border-color);
-  border-radius: var(--ui-border-radius);
-  background-color: var(--ui-background-color);
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-surface);
+  transition: border-color var(--duration) ease;
+}
+
+.select-container:hover {
+  border-color: var(--border-gold);
 }
 
 .select-container::after {
   content: '';
   position: absolute;
-  top: 40%;
-  right: 10px;
-  width: 0;
-  height: 0;
-  padding: 3px;
-  border: solid var(--text-color);
+  top: 50%;
+  right: 12px;
+  width: 6px;
+  height: 6px;
+  border: solid var(--gold);
   border-width: 0 2px 2px 0;
-  transform: rotate(45deg);
+  transform: translateY(-70%) rotate(45deg);
   pointer-events: none;
 }
 
 .select-container label {
   position: absolute;
-  top: 6px;
-  padding: 0 10px;
-  font-size: 12px;
-  text-wrap: nowrap;
-  color: var(--text-color);
-  cursor: pointer;
+  top: 4px;
+  left: 10px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
   pointer-events: none;
 }
 
-.select-container:hover {
-  background-color: var(--ui-hover-color);
-}
-
 select {
-  padding: 22px 34px 10px 10px;
-  box-sizing: content-box;
-  border: 0px;
-  border-radius: var(--ui-border-radius);
+  width: 100%;
+  padding: 20px 32px 6px 10px;
+  box-sizing: border-box;
+  border: 0;
+  border-radius: var(--radius-md);
   appearance: none;
-  font-size: 16px;
-  text-align: left;
-  color: var(--text-color);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-ink);
   background-color: transparent;
   cursor: pointer;
+  outline: none;
 }
 
 option {
-  color: initial;
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  padding: 8px;
 }

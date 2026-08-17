@@ -1,3 +1,4 @@
+import { createUniqueId } from 'solid-js';
 import type { JSX, Accessor } from 'solid-js';
 import './Slider.css';
 
@@ -25,10 +26,7 @@ const Slider = ({
     } = event.currentTarget;
     if (!valid) return;
 
-    // Use requestAnimationFrame for smoother slider updates
-    requestAnimationFrame(() => {
-      updateVal(valueAsNumber);
-    });
+    updateVal(valueAsNumber);
   };
 
   const handleBlur: JSX.EventHandler<HTMLInputElement, FocusEvent> = (
@@ -40,7 +38,8 @@ const Slider = ({
     event.currentTarget.value = String(currentVal());
   };
 
-  const id = `${label.replace(/\s+/, '-')}`;
+  const uid = createUniqueId();
+  const id = `${label.replace(/\s+/, '-')}-${uid}`;
   const percent = () => ((currentVal() - min) / (max - min)) * 100;
   return (
     <div class="slider-container">
